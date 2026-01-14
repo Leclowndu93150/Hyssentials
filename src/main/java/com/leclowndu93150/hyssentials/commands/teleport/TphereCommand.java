@@ -27,9 +27,9 @@ public class TphereCommand extends AbstractPlayerCommand {
     private final RequiredArg<String> targetArg = this.withRequiredArg("player", "Player to teleport to you", ArgTypes.STRING);
 
     public TphereCommand(@Nonnull BackManager backManager) {
-        super("tphere", "Teleport a player to you (admin)");
+        super("htphere", "Teleport a player to you (admin)");
         this.backManager = backManager;
-        this.requirePermission(HytalePermissions.fromCommand("hyssentials.tphere"));
+        this.requirePermission(HytalePermissions.fromCommand("hyssentials.htphere"));
     }
 
     @Override
