@@ -21,8 +21,10 @@ import com.leclowndu93150.hyssentials.commands.warp.DelWarpCommand;
 import com.leclowndu93150.hyssentials.commands.warp.SetWarpCommand;
 import com.leclowndu93150.hyssentials.commands.warp.WarpCommand;
 import com.leclowndu93150.hyssentials.commands.warp.WarpsCommand;
+import com.leclowndu93150.hyssentials.config.ConfigMigrator;
 import com.leclowndu93150.hyssentials.config.HyssentialsConfig;
 import com.leclowndu93150.hyssentials.manager.BackManager;
+import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.DataManager;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
 import com.leclowndu93150.hyssentials.manager.SpawnManager;
@@ -40,6 +42,7 @@ public class HyssentialsPlugin extends JavaPlugin {
     private WarpManager warpManager;
     private SpawnManager spawnManager;
     private BackManager backManager;
+    private CooldownManager cooldownManager;
 
     public HyssentialsPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -47,6 +50,10 @@ public class HyssentialsPlugin extends JavaPlugin {
 
     @Override
     protected void setup() {
+        // Run config migration before loading config
+        ConfigMigrator migrator = new ConfigMigrator(this.getDataDirectory(), this.getLogger());
+        migrator.migrate();
+
         HyssentialsConfig cfg = this.config.get();
         this.config.save();
         this.dataManager = new DataManager(this.getDataDirectory(), this.getLogger());
@@ -55,6 +62,12 @@ public class HyssentialsPlugin extends JavaPlugin {
         this.warpManager = new WarpManager(this.dataManager);
         this.spawnManager = new SpawnManager(this.dataManager);
         this.backManager = new BackManager(cfg.getBackHistorySize());
+        this.cooldownManager = new CooldownManager(
+            cfg.getHomeCooldownMinutes(),
+            cfg.getWarpCooldownMinutes(),
+            cfg.getSpawnCooldownMinutes(),
+            cfg.getBackCooldownMinutes()
+        );
         this.getEntityStoreRegistry().registerSystem(new PlayerDeathBackSystem(this.backManager));
     }
 
@@ -66,16 +79,16 @@ public class HyssentialsPlugin extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new TpdenyCommand(this.tpaManager));
         this.getCommandRegistry().registerCommand(new TpcancelCommand(this.tpaManager));
         this.getCommandRegistry().registerCommand(new SetHomeCommand(this.homeManager));
-        this.getCommandRegistry().registerCommand(new HomeCommand(this.homeManager, this.backManager));
+        this.getCommandRegistry().registerCommand(new HomeCommand(this.homeManager, this.backManager, this.cooldownManager));
         this.getCommandRegistry().registerCommand(new DelHomeCommand(this.homeManager));
         this.getCommandRegistry().registerCommand(new HomesCommand(this.homeManager));
         this.getCommandRegistry().registerCommand(new SetWarpCommand(this.warpManager));
-        this.getCommandRegistry().registerCommand(new WarpCommand(this.warpManager, this.backManager));
+        this.getCommandRegistry().registerCommand(new WarpCommand(this.warpManager, this.backManager, this.cooldownManager));
         this.getCommandRegistry().registerCommand(new DelWarpCommand(this.warpManager));
         this.getCommandRegistry().registerCommand(new WarpsCommand(this.warpManager));
         this.getCommandRegistry().registerCommand(new SetSpawnCommand(this.spawnManager));
-        this.getCommandRegistry().registerCommand(new SpawnCommand(this.spawnManager, this.backManager));
-        this.getCommandRegistry().registerCommand(new BackCommand(this.backManager));
+        this.getCommandRegistry().registerCommand(new SpawnCommand(this.spawnManager, this.backManager, this.cooldownManager));
+        this.getCommandRegistry().registerCommand(new BackCommand(this.backManager, this.cooldownManager));
         this.getCommandRegistry().registerCommand(new TpCommand(this.backManager));
         this.getCommandRegistry().registerCommand(new TphereCommand(this.backManager));
         this.getLogger().at(Level.INFO).log("Hyssentials loaded! Commands: /tpa, /tpahere, /tpaccept, /tpdeny, /tpcancel, /home, /sethome, /delhome, /homes, /warp, /setwarp, /delwarp, /warps, /spawn, /setspawn, /back, /tp, /tphere");

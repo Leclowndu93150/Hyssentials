@@ -18,18 +18,22 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.LocationData;
 import com.leclowndu93150.hyssentials.manager.BackManager;
+import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.WarpManager;
+import java.util.UUID;
 import javax.annotation.Nonnull;
 
 public class WarpCommand extends AbstractPlayerCommand {
     private final WarpManager warpManager;
     private final BackManager backManager;
+    private final CooldownManager cooldownManager;
     private final RequiredArg<String> nameArg = this.withRequiredArg("name", "Warp name", ArgTypes.STRING);
 
-    public WarpCommand(@Nonnull WarpManager warpManager, @Nonnull BackManager backManager) {
+    public WarpCommand(@Nonnull WarpManager warpManager, @Nonnull BackManager backManager, @Nonnull CooldownManager cooldownManager) {
         super("warp", "Teleport to a server warp");
         this.warpManager = warpManager;
         this.backManager = backManager;
+        this.cooldownManager = cooldownManager;
     }
 
     @Override
@@ -41,6 +45,14 @@ public class WarpCommand extends AbstractPlayerCommand {
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
                           @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         String name = nameArg.get(context);
+        UUID playerUuid = playerRef.getUuid();
+
+        if (cooldownManager.isOnCooldown(playerUuid, CooldownManager.WARP)) {
+            long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.WARP);
+            context.sendMessage(Message.raw(String.format("You must wait %d seconds before using /warp again.", remaining)));
+            return;
+        }
+
         LocationData warp = warpManager.getWarp(name);
         if (warp == null) {
             context.sendMessage(Message.raw(String.format("Warp '%s' not found. Use /warps to see available warps.", name)));
@@ -61,6 +73,7 @@ public class WarpCommand extends AbstractPlayerCommand {
         world.execute(() -> {
             Teleport teleport = new Teleport(finalWorld, warp.toPosition(), warp.toRotation());
             store.addComponent(ref, Teleport.getComponentType(), teleport);
+            cooldownManager.setCooldown(playerUuid, CooldownManager.WARP);
             context.sendMessage(Message.raw(String.format(
                 "Teleporting to warp '%s' at %.1f, %.1f, %.1f",
                 name, warp.x(), warp.y(), warp.z())));

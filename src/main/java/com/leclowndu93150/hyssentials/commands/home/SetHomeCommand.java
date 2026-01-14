@@ -6,7 +6,7 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 
 public class SetHomeCommand extends AbstractPlayerCommand {
     private final HomeManager homeManager;
-    private final DefaultArg<String> nameArg = this.withDefaultArg("name", "Home name", ArgTypes.STRING, "home", "home");
+    private final RequiredArg<String> nameArg = this.withRequiredArg("name", "Home name", ArgTypes.STRING);
 
     public SetHomeCommand(@Nonnull HomeManager homeManager) {
         super("sethome", "Set a home at your current location");
