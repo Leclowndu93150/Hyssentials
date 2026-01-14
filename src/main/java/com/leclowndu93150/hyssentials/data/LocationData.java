@@ -18,8 +18,8 @@ public record LocationData(
 
     public Vector3f toRotation() {
         // return new Vector3f(yaw, pitch, 0.0f);
-        // The pitch value was messing up the third-person character model, so it was updated to 0.0f.
-        return new Vector3f(yaw, 0.0f, 0.0f);
+        // The yaw value was messing up the third-person character model, so it was updated to 0.0f.
+        return new Vector3f(0.0f, pitch, 0.0f);
     }
 
     public static LocationData from(String worldName, Vector3d position, Vector3f rotation) {
