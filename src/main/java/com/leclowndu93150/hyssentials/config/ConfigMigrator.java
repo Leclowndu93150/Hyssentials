@@ -60,22 +60,22 @@ public class ConfigMigrator {
         renameKey(json, "TpaCooldown", "TpaCooldownSeconds");
         renameKey(json, "TeleportDelay", "TeleportDelaySeconds");
 
-        // Add new cooldown settings (in minutes)
-        if (!json.has("HomeCooldownMinutes")) {
-            json.addProperty("HomeCooldownMinutes", 1);
-            logger.atInfo().log("Added HomeCooldownMinutes with default value 1");
+        // Add new cooldown settings (in seconds)
+        if (!json.has("HomeCooldownSeconds")) {
+            json.addProperty("HomeCooldownSeconds", 60);
+            logger.atInfo().log("Added HomeCooldownSeconds with default value 60");
         }
-        if (!json.has("WarpCooldownMinutes")) {
-            json.addProperty("WarpCooldownMinutes", 1);
-            logger.atInfo().log("Added WarpCooldownMinutes with default value 1");
+        if (!json.has("WarpCooldownSeconds")) {
+            json.addProperty("WarpCooldownSeconds", 60);
+            logger.atInfo().log("Added WarpCooldownSeconds with default value 60");
         }
-        if (!json.has("SpawnCooldownMinutes")) {
-            json.addProperty("SpawnCooldownMinutes", 1);
-            logger.atInfo().log("Added SpawnCooldownMinutes with default value 1");
+        if (!json.has("SpawnCooldownSeconds")) {
+            json.addProperty("SpawnCooldownSeconds", 60);
+            logger.atInfo().log("Added SpawnCooldownSeconds with default value 60");
         }
-        if (!json.has("BackCooldownMinutes")) {
-            json.addProperty("BackCooldownMinutes", 1);
-            logger.atInfo().log("Added BackCooldownMinutes with default value 1");
+        if (!json.has("BackCooldownSeconds")) {
+            json.addProperty("BackCooldownSeconds", 60);
+            logger.atInfo().log("Added BackCooldownSeconds with default value 60");
         }
     }
 

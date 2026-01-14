@@ -16,10 +16,10 @@ public class HyssentialsConfig {
         .append(new KeyedCodec<>("TpaCooldownSeconds", Codec.INTEGER), HyssentialsConfig::setTpaCooldown, HyssentialsConfig::getTpaCooldown).add()
         .append(new KeyedCodec<>("TeleportDelaySeconds", Codec.INTEGER), HyssentialsConfig::setTeleportDelay, HyssentialsConfig::getTeleportDelay).add()
         .append(new KeyedCodec<>("BackHistorySize", Codec.INTEGER), HyssentialsConfig::setBackHistorySize, HyssentialsConfig::getBackHistorySize).add()
-        .append(new KeyedCodec<>("HomeCooldownMinutes", Codec.INTEGER), HyssentialsConfig::setHomeCooldownMinutes, HyssentialsConfig::getHomeCooldownMinutes).add()
-        .append(new KeyedCodec<>("WarpCooldownMinutes", Codec.INTEGER), HyssentialsConfig::setWarpCooldownMinutes, HyssentialsConfig::getWarpCooldownMinutes).add()
-        .append(new KeyedCodec<>("SpawnCooldownMinutes", Codec.INTEGER), HyssentialsConfig::setSpawnCooldownMinutes, HyssentialsConfig::getSpawnCooldownMinutes).add()
-        .append(new KeyedCodec<>("BackCooldownMinutes", Codec.INTEGER), HyssentialsConfig::setBackCooldownMinutes, HyssentialsConfig::getBackCooldownMinutes).add()
+        .append(new KeyedCodec<>("HomeCooldownSeconds", Codec.INTEGER), HyssentialsConfig::setHomeCooldownSeconds, HyssentialsConfig::getHomeCooldownSeconds).add()
+        .append(new KeyedCodec<>("WarpCooldownSeconds", Codec.INTEGER), HyssentialsConfig::setWarpCooldownSeconds, HyssentialsConfig::getWarpCooldownSeconds).add()
+        .append(new KeyedCodec<>("SpawnCooldownSeconds", Codec.INTEGER), HyssentialsConfig::setSpawnCooldownSeconds, HyssentialsConfig::getSpawnCooldownSeconds).add()
+        .append(new KeyedCodec<>("BackCooldownSeconds", Codec.INTEGER), HyssentialsConfig::setBackCooldownSeconds, HyssentialsConfig::getBackCooldownSeconds).add()
         .build();
 
     private int configVersion = CONFIG_VERSION;
@@ -28,10 +28,10 @@ public class HyssentialsConfig {
     private int tpaCooldown = 30;
     private int teleportDelay = 3;
     private int backHistorySize = 5;
-    private int homeCooldownMinutes = 1;
-    private int warpCooldownMinutes = 1;
-    private int spawnCooldownMinutes = 1;
-    private int backCooldownMinutes = 1;
+    private int homeCooldownSeconds = 60;
+    private int warpCooldownSeconds = 60;
+    private int spawnCooldownSeconds = 60;
+    private int backCooldownSeconds = 60;
 
     public HyssentialsConfig() {
     }
@@ -84,35 +84,35 @@ public class HyssentialsConfig {
         this.configVersion = configVersion;
     }
 
-    public int getHomeCooldownMinutes() {
-        return homeCooldownMinutes;
+    public int getHomeCooldownSeconds() {
+        return homeCooldownSeconds;
     }
 
-    public void setHomeCooldownMinutes(int homeCooldownMinutes) {
-        this.homeCooldownMinutes = homeCooldownMinutes;
+    public void setHomeCooldownSeconds(int homeCooldownSeconds) {
+        this.homeCooldownSeconds = homeCooldownSeconds;
     }
 
-    public int getWarpCooldownMinutes() {
-        return warpCooldownMinutes;
+    public int getWarpCooldownSeconds() {
+        return warpCooldownSeconds;
     }
 
-    public void setWarpCooldownMinutes(int warpCooldownMinutes) {
-        this.warpCooldownMinutes = warpCooldownMinutes;
+    public void setWarpCooldownSeconds(int warpCooldownSeconds) {
+        this.warpCooldownSeconds = warpCooldownSeconds;
     }
 
-    public int getSpawnCooldownMinutes() {
-        return spawnCooldownMinutes;
+    public int getSpawnCooldownSeconds() {
+        return spawnCooldownSeconds;
     }
 
-    public void setSpawnCooldownMinutes(int spawnCooldownMinutes) {
-        this.spawnCooldownMinutes = spawnCooldownMinutes;
+    public void setSpawnCooldownSeconds(int spawnCooldownSeconds) {
+        this.spawnCooldownSeconds = spawnCooldownSeconds;
     }
 
-    public int getBackCooldownMinutes() {
-        return backCooldownMinutes;
+    public int getBackCooldownSeconds() {
+        return backCooldownSeconds;
     }
 
-    public void setBackCooldownMinutes(int backCooldownMinutes) {
-        this.backCooldownMinutes = backCooldownMinutes;
+    public void setBackCooldownSeconds(int backCooldownSeconds) {
+        this.backCooldownSeconds = backCooldownSeconds;
     }
 }

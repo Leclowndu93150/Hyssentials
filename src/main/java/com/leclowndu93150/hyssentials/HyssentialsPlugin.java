@@ -63,10 +63,10 @@ public class HyssentialsPlugin extends JavaPlugin {
         this.spawnManager = new SpawnManager(this.dataManager);
         this.backManager = new BackManager(cfg.getBackHistorySize());
         this.cooldownManager = new CooldownManager(
-            cfg.getHomeCooldownMinutes(),
-            cfg.getWarpCooldownMinutes(),
-            cfg.getSpawnCooldownMinutes(),
-            cfg.getBackCooldownMinutes()
+            cfg.getHomeCooldownSeconds(),
+            cfg.getWarpCooldownSeconds(),
+            cfg.getSpawnCooldownSeconds(),
+            cfg.getBackCooldownSeconds()
         );
         this.getEntityStoreRegistry().registerSystem(new PlayerDeathBackSystem(this.backManager));
     }

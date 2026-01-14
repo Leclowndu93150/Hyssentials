@@ -7,16 +7,16 @@ import javax.annotation.Nonnull;
 
 public class CooldownManager {
     private final Map<String, Map<UUID, Long>> cooldowns = new ConcurrentHashMap<>();
-    private final int homeCooldownMinutes;
-    private final int warpCooldownMinutes;
-    private final int spawnCooldownMinutes;
-    private final int backCooldownMinutes;
+    private final int homeCooldownSeconds;
+    private final int warpCooldownSeconds;
+    private final int spawnCooldownSeconds;
+    private final int backCooldownSeconds;
 
-    public CooldownManager(int homeCooldownMinutes, int warpCooldownMinutes, int spawnCooldownMinutes, int backCooldownMinutes) {
-        this.homeCooldownMinutes = homeCooldownMinutes;
-        this.warpCooldownMinutes = warpCooldownMinutes;
-        this.spawnCooldownMinutes = spawnCooldownMinutes;
-        this.backCooldownMinutes = backCooldownMinutes;
+    public CooldownManager(int homeCooldownSeconds, int warpCooldownSeconds, int spawnCooldownSeconds, int backCooldownSeconds) {
+        this.homeCooldownSeconds = homeCooldownSeconds;
+        this.warpCooldownSeconds = warpCooldownSeconds;
+        this.spawnCooldownSeconds = spawnCooldownSeconds;
+        this.backCooldownSeconds = backCooldownSeconds;
     }
 
     public boolean isOnCooldown(@Nonnull UUID player, @Nonnull String commandType) {
@@ -63,18 +63,13 @@ public class CooldownManager {
     }
 
     private int getCooldownSeconds(@Nonnull String commandType) {
-        int minutes = switch (commandType) {
-            case "home" -> homeCooldownMinutes;
-            case "warp" -> warpCooldownMinutes;
-            case "spawn" -> spawnCooldownMinutes;
-            case "back" -> backCooldownMinutes;
+        return switch (commandType) {
+            case "home" -> homeCooldownSeconds;
+            case "warp" -> warpCooldownSeconds;
+            case "spawn" -> spawnCooldownSeconds;
+            case "back" -> backCooldownSeconds;
             default -> 0;
         };
-        return minutes * 60;
-    }
-
-    public long getCooldownRemainingFormatted(@Nonnull UUID player, @Nonnull String commandType) {
-        return getCooldownRemaining(player, commandType);
     }
 
     private void cleanupExpired(@Nonnull String commandType) {
