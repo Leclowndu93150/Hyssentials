@@ -20,7 +20,7 @@ import com.leclowndu93150.hyssentials.manager.BackManager;
 import javax.annotation.Nonnull;
 
 public class PlayerDeathBackSystem extends RefChangeSystem<EntityStore, DeathComponent> {
-    private static final Query<EntityStore> QUERY = Player.getComponentType();
+    private static final Query<EntityStore> QUERY = PlayerRef.getComponentType();
     private final BackManager backManager;
 
     public PlayerDeathBackSystem(@Nonnull BackManager backManager) {

@@ -9,11 +9,11 @@ public record LocationData(
     double x,
     double y,
     double z,
-    float yaw,
-    float pitch
+    float pitch,
+    float yaw
 ) {
     public Vector3d toPosition() {
-        return new Vector3d(x, y, z);
+        return new Vector3d(x, y + 1.0, z);
     }
 
     public Vector3f toRotation() {
@@ -28,8 +28,8 @@ public record LocationData(
             position.getX(),
             position.getY(),
             position.getZ(),
-            rotation.getYaw(),
-            rotation.getPitch()
+            rotation.getPitch(),
+            rotation.getYaw()
         );
     }
 }

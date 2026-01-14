@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
+import com.leclowndu93150.hyssentials.util.Permissions;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -36,7 +37,8 @@ public class HomesCommand extends AbstractPlayerCommand {
             return;
         }
         int count = homes.size();
-        int max = homeManager.getMaxHomes();
+        boolean hasVipHomes = Permissions.hasVipHomes(playerRef);
+        int max = hasVipHomes ? homeManager.getVipMaxHomes() : homeManager.getMaxHomes();
         context.sendMessage(Message.raw(String.format("Your homes (%d/%d):", count, max)));
         for (String home : homes) {
             context.sendMessage(Message.raw("  - " + home));

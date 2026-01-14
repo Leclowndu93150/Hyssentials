@@ -6,7 +6,7 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
@@ -18,19 +18,23 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.LocationData;
 import com.leclowndu93150.hyssentials.manager.BackManager;
+import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
+import com.leclowndu93150.hyssentials.util.Permissions;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
 public class HomeCommand extends AbstractPlayerCommand {
     private final HomeManager homeManager;
     private final BackManager backManager;
-    private final DefaultArg<String> nameArg = this.withDefaultArg("name", "Home name", ArgTypes.STRING, "home", "home");
+    private final CooldownManager cooldownManager;
+    private final RequiredArg<String> nameArg = this.withRequiredArg("name", "Home name", ArgTypes.STRING);
 
-    public HomeCommand(@Nonnull HomeManager homeManager, @Nonnull BackManager backManager) {
+    public HomeCommand(@Nonnull HomeManager homeManager, @Nonnull BackManager backManager, @Nonnull CooldownManager cooldownManager) {
         super("home", "Teleport to your home");
         this.homeManager = homeManager;
         this.backManager = backManager;
+        this.cooldownManager = cooldownManager;
     }
 
     @Override
@@ -43,6 +47,15 @@ public class HomeCommand extends AbstractPlayerCommand {
                           @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         String name = nameArg.get(context);
         UUID playerUuid = playerRef.getUuid();
+        boolean isVip = Permissions.hasVipCooldown(playerRef);
+        boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
+
+        if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, CooldownManager.HOME, isVip)) {
+            long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.HOME, isVip);
+            context.sendMessage(Message.raw(String.format("You must wait %d seconds before using /home again.", remaining)));
+            return;
+        }
+
         LocationData home = homeManager.getHome(playerUuid, name);
         if (home == null) {
             context.sendMessage(Message.raw(String.format("Home '%s' not found. Use /sethome %s to set it.", name, name)));
@@ -63,6 +76,9 @@ public class HomeCommand extends AbstractPlayerCommand {
         world.execute(() -> {
             Teleport teleport = new Teleport(finalWorld, home.toPosition(), home.toRotation());
             store.addComponent(ref, Teleport.getComponentType(), teleport);
+            if (!bypassCooldown) {
+                cooldownManager.setCooldown(playerUuid, CooldownManager.HOME, isVip);
+            }
             context.sendMessage(Message.raw(String.format(
                 "Teleporting to home '%s' at %.1f, %.1f, %.1f",
                 name, home.x(), home.y(), home.z())));

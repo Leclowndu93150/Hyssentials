@@ -16,18 +16,20 @@ public class HomeManager {
     private final DataManager dataManager;
     private final Map<UUID, Map<String, LocationData>> playerHomes;
     private final int maxHomes;
+    private final int vipMaxHomes;
 
-    public HomeManager(@Nonnull DataManager dataManager, int maxHomes) {
+    public HomeManager(@Nonnull DataManager dataManager, int maxHomes, int vipMaxHomes) {
         this.dataManager = dataManager;
         this.maxHomes = maxHomes;
+        this.vipMaxHomes = vipMaxHomes;
         this.playerHomes = dataManager.loadPlayerHomes();
     }
 
     public boolean setHome(@Nonnull UUID playerUuid, @Nonnull String name, @Nonnull World world,
-                          @Nonnull Vector3d position, @Nonnull Vector3f rotation) {
+                          @Nonnull Vector3d position, @Nonnull Vector3f rotation, int effectiveMaxHomes) {
         Map<String, LocationData> homes = playerHomes.computeIfAbsent(playerUuid, k -> new ConcurrentHashMap<>());
         String lowerName = name.toLowerCase();
-        if (!homes.containsKey(lowerName) && homes.size() >= maxHomes) {
+        if (!homes.containsKey(lowerName) && homes.size() >= effectiveMaxHomes) {
             return false;
         }
         homes.put(lowerName, LocationData.from(world.getName(), position, rotation));
@@ -73,6 +75,10 @@ public class HomeManager {
 
     public int getMaxHomes() {
         return maxHomes;
+    }
+
+    public int getVipMaxHomes() {
+        return vipMaxHomes;
     }
 
     public void save() {
