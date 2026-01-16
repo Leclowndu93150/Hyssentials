@@ -19,6 +19,9 @@ import com.leclowndu93150.hyssentials.commands.tpa.TpaCommand;
 import com.leclowndu93150.hyssentials.commands.tpa.TpahereCommand;
 import com.leclowndu93150.hyssentials.commands.tpa.TpcancelCommand;
 import com.leclowndu93150.hyssentials.commands.tpa.TpdenyCommand;
+import com.leclowndu93150.hyssentials.commands.msg.AdminChatCommand;
+import com.leclowndu93150.hyssentials.commands.msg.MsgCommand;
+import com.leclowndu93150.hyssentials.commands.msg.ReplyCommand;
 import com.leclowndu93150.hyssentials.commands.warp.DelWarpCommand;
 import com.leclowndu93150.hyssentials.commands.warp.SetWarpCommand;
 import com.leclowndu93150.hyssentials.commands.warp.WarpCommand;
@@ -34,6 +37,8 @@ import com.leclowndu93150.hyssentials.manager.SpawnManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
 import com.leclowndu93150.hyssentials.manager.TpaManager;
 import com.leclowndu93150.hyssentials.manager.WarpManager;
+import com.leclowndu93150.hyssentials.manager.PrivateMessageManager;
+import com.leclowndu93150.hyssentials.manager.AdminChatManager;
 import com.leclowndu93150.hyssentials.system.PlayerDeathBackSystem;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
@@ -49,6 +54,8 @@ public class HyssentialsPlugin extends JavaPlugin {
     private BackManager backManager;
     private CooldownManager cooldownManager;
     private TeleportWarmupManager warmupManager;
+    private PrivateMessageManager msgManager;
+    private AdminChatManager adminChatManager;
 
     public HyssentialsPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -71,6 +78,8 @@ public class HyssentialsPlugin extends JavaPlugin {
         this.homeManager = new HomeManager(this.dataManager, this.rankManager);
         this.warpManager = new WarpManager(this.dataManager);
         this.spawnManager = new SpawnManager(this.dataManager);
+        this.msgManager = new PrivateMessageManager();
+        this.adminChatManager = new AdminChatManager(this.getDataDirectory(), this.getLogger());
 
         this.getEntityStoreRegistry().registerSystem(new PlayerDeathBackSystem(this.backManager));
     }
@@ -97,6 +106,9 @@ public class HyssentialsPlugin extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new TpCommand(this.backManager));
         this.getCommandRegistry().registerCommand(new TphereCommand(this.backManager));
         this.getCommandRegistry().registerCommand(new HysCommand(this.rankManager, this.homeManager, this.config));
+        this.getCommandRegistry().registerCommand(new MsgCommand(this.msgManager));
+        this.getCommandRegistry().registerCommand(new ReplyCommand(this.msgManager));
+        this.getCommandRegistry().registerCommand(new AdminChatCommand(this.adminChatManager));
         this.getLogger().at(Level.INFO).log("Hyssentials loaded with rank system!");
     }
 
@@ -123,5 +135,8 @@ public class HyssentialsPlugin extends JavaPlugin {
     public void reloadConfig() {
         this.config.load();
         this.rankManager.reload();
+        if (this.adminChatManager != null) {
+            this.adminChatManager.reload();
+        }
     }
 }

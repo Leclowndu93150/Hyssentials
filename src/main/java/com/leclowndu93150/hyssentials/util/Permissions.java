@@ -13,6 +13,10 @@ public final class Permissions {
     public static final String ADMIN_PLAYERINFO = "hyssentials.admin.playerinfo";
     public static final String ADMIN_RELOAD = "hyssentials.admin.reload";
 
+    // Admin chat permissions (groups defined in adminchat.json)
+    public static final String ADMIN_CHAT_STAFF = "hyssentials.adminchat.staff";
+    public static final String ADMIN_CHAT_ADMIN = "hyssentials.adminchat.admin";
+
     @Deprecated
     public static final String VIP = "hyssentials.vip";
     @Deprecated

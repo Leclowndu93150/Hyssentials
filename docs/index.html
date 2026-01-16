@@ -389,6 +389,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Player Commands</div>
                 <a href="#teleport-requests" class="nav-link">Teleport Requests</a>
+                <a href="#private-messaging" class="nav-link">Private Messaging</a>
                 <a href="#homes" class="nav-link">Homes</a>
                 <a href="#warps" class="nav-link">Warps</a>
                 <a href="#spawn" class="nav-link">Spawn</a>
@@ -399,6 +400,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Admin Guide</div>
                 <a href="#admin-commands" class="nav-link">Admin Commands</a>
+                <a href="#admin-chat" class="nav-link">Admin Chat</a>
                 <a href="#rank-system" class="nav-link">Rank System</a>
                 <a href="#rank-management" class="nav-link">Rank Management UI</a>
                 <a href="#player-assignment" class="nav-link">Assigning Ranks</a>
@@ -408,6 +410,7 @@
                 <div class="nav-section-title">Configuration</div>
                 <a href="#config-files" class="nav-link">Config Files</a>
                 <a href="#ranks-json" class="nav-link">ranks.json</a>
+                <a href="#adminchat-json" class="nav-link">adminchat.json</a>
                 <a href="#permissions" class="nav-link">Permissions</a>
             </div>
         </nav>
@@ -424,6 +427,8 @@
                 <h3>Features</h3>
                 <ul>
                     <li><strong>Teleport Requests</strong> - TPA system with configurable cooldowns and timeouts</li>
+                    <li><strong>Private Messaging</strong> - Send private messages with /msg and /r (reply)</li>
+                    <li><strong>Admin Chat</strong> - Configurable staff/admin chat channels with /a command</li>
                     <li><strong>Homes System</strong> - Players can set and teleport to personal home locations</li>
                     <li><strong>Server Warps</strong> - Admin-defined warp points for all players</li>
                     <li><strong>Random Teleport</strong> - Teleport to random safe locations in the world</li>
@@ -511,6 +516,42 @@
                 <div class="callout callout-tip">
                     <div class="callout-title">Timeout</div>
                     <p>TPA requests expire after a configurable timeout (default: 60 seconds). This can be customized per rank.</p>
+                </div>
+            </section>
+
+            <!-- Private Messaging -->
+            <section id="private-messaging" class="section">
+                <h2>Private Messaging</h2>
+                <p>Send private messages to other players. The reply command remembers who you last messaged.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/msg &lt;player&gt; &lt;message&gt;</code></td>
+                            <td>Send a private message to a player</td>
+                        </tr>
+                        <tr>
+                            <td><code>/r &lt;message&gt;</code></td>
+                            <td>Reply to the last player who messaged you</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Aliases</h4>
+                <ul>
+                    <li><code>/msg</code> - also available as <code>/tell</code>, <code>/whisper</code>, <code>/w</code>, <code>/pm</code></li>
+                    <li><code>/r</code> - also available as <code>/reply</code></li>
+                </ul>
+
+                <div class="callout callout-tip">
+                    <div class="callout-title">Quick Replies</div>
+                    <p>When someone sends you a message, you can quickly reply using <code>/r</code> without typing their name again.</p>
                 </div>
             </section>
 
@@ -732,6 +773,69 @@
                 </div>
             </section>
 
+            <!-- Admin Chat -->
+            <section id="admin-chat" class="section">
+                <h2>Admin Chat</h2>
+                <p>Private chat channels for staff members. Messages are only visible to players with the appropriate permission.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/a &lt;message&gt;</code></td>
+                            <td>Send a message to your default admin chat group</td>
+                        </tr>
+                        <tr>
+                            <td><code>/a &lt;group&gt; &lt;message&gt;</code></td>
+                            <td>Send a message to a specific group (e.g., <code>/a admin Hello</code>)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Aliases</h4>
+                <p><code>/a</code> is also available as <code>/adminchat</code> and <code>/ac</code>.</p>
+
+                <div class="callout callout-tip">
+                    <div class="callout-title">Multiple Groups</div>
+                    <p>If you have access to multiple groups, specify the group name as the first argument: <code>/a admin Important message</code>. If omitted, messages go to your first available group.</p>
+                </div>
+
+                <h3>Chat Groups</h3>
+                <p>Admin chat supports multiple groups, each with its own permission. By default, two groups are configured:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>Permission</th>
+                            <th>Prefix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Staff</td>
+                            <td><code>hyssentials.adminchat.staff</code></td>
+                            <td>[STAFF]</td>
+                        </tr>
+                        <tr>
+                            <td>Admin</td>
+                            <td><code>hyssentials.adminchat.admin</code></td>
+                            <td>[ADMIN]</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout callout-info">
+                    <div class="callout-title">Configuration</div>
+                    <p>Chat groups are defined in <code>adminchat.json</code>. You can add, remove, or customize groups with different permissions and prefixes.</p>
+                </div>
+            </section>
+
             <!-- Rank System -->
             <section id="rank-system" class="section">
                 <h2>Rank System</h2>
@@ -922,6 +1026,63 @@
 }</code></pre>
             </section>
 
+            <!-- adminchat.json -->
+            <section id="adminchat-json" class="section">
+                <h2>adminchat.json Structure</h2>
+                <p>Configuration for admin chat groups:</p>
+
+                <pre><code>{
+  "groups": [
+    {
+      "id": "staff",
+      "displayName": "Staff Chat",
+      "permission": "hyssentials.adminchat.staff",
+      "prefix": "[STAFF]"
+    },
+    {
+      "id": "admin",
+      "displayName": "Admin Chat",
+      "permission": "hyssentials.adminchat.admin",
+      "prefix": "[ADMIN]"
+    }
+  ],
+  "defaultGroup": "staff"
+}</code></pre>
+
+                <h3>Group Properties</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>id</code></td>
+                            <td>Unique identifier for the group</td>
+                        </tr>
+                        <tr>
+                            <td><code>displayName</code></td>
+                            <td>Human-readable name for the group</td>
+                        </tr>
+                        <tr>
+                            <td><code>permission</code></td>
+                            <td>Permission node required to use this chat</td>
+                        </tr>
+                        <tr>
+                            <td><code>prefix</code></td>
+                            <td>Prefix shown before messages (e.g., [STAFF])</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout callout-tip">
+                    <div class="callout-title">Custom Groups</div>
+                    <p>You can add as many groups as you need. For example, add a "mod" group with permission <code>hyssentials.adminchat.mod</code> for moderators.</p>
+                </div>
+            </section>
+
             <!-- Permissions -->
             <section id="permissions" class="section">
                 <h2>Permissions Reference</h2>
@@ -978,6 +1139,26 @@
                         <tr>
                             <td><code>hyssentials.admin.reload</code></td>
                             <td>Reload configuration</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Admin Chat Permissions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Permission</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>hyssentials.adminchat.staff</code></td>
+                            <td>Access staff chat channel</td>
+                        </tr>
+                        <tr>
+                            <td><code>hyssentials.adminchat.admin</code></td>
+                            <td>Access admin chat channel</td>
                         </tr>
                     </tbody>
                 </table>
