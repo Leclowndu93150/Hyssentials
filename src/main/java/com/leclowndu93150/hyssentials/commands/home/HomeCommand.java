@@ -3,7 +3,6 @@ package com.leclowndu93150.hyssentials.commands.home;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -13,10 +12,12 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.LocationData;
 import com.leclowndu93150.hyssentials.gui.HomeListGui;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import com.leclowndu93150.hyssentials.util.Permissions;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -72,19 +73,19 @@ public class HomeCommand extends AbstractPlayerCommand {
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
 
         if (!settings.isEnabled()) {
-            context.sendMessage(Message.raw("You don't have permission to use /home."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_HOME));
             return;
         }
 
         if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, CooldownManager.HOME, settings.getCooldownSeconds())) {
             long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.HOME, settings.getCooldownSeconds());
-            context.sendMessage(Message.raw(String.format("You must wait %d seconds before using /home again.", remaining)));
+            context.sendMessage(ChatUtil.parse(Messages.COOLDOWN_HOME, remaining));
             return;
         }
 
         LocationData home = homeManager.getHome(playerUuid, name);
         if (home == null) {
-            context.sendMessage(Message.raw(String.format("Home '%s' not found. Use /sethome %s to set it.", name, name)));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_HOME_NOT_FOUND, name, name));
             return;
         }
 

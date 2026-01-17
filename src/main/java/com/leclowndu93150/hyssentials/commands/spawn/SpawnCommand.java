@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Transform;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -14,9 +13,11 @@ import com.hypixel.hytale.server.core.universe.world.spawn.ISpawnProvider;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import com.leclowndu93150.hyssentials.util.Permissions;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -47,13 +48,13 @@ public class SpawnCommand extends AbstractPlayerCommand {
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
 
         if (!settings.isEnabled()) {
-            context.sendMessage(Message.raw("You don't have permission to use /spawn."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_SPAWN));
             return;
         }
 
         if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, CooldownManager.SPAWN, settings.getCooldownSeconds())) {
             long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.SPAWN, settings.getCooldownSeconds());
-            context.sendMessage(Message.raw(String.format("You must wait %d seconds before using /spawn again.", remaining)));
+            context.sendMessage(ChatUtil.parse(Messages.COOLDOWN_SPAWN, remaining));
             return;
         }
 

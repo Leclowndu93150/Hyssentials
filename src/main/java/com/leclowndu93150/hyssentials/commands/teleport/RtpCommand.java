@@ -3,7 +3,6 @@ package com.leclowndu93150.hyssentials.commands.teleport;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -12,9 +11,11 @@ import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import com.leclowndu93150.hyssentials.util.Permissions;
 
 import javax.annotation.Nonnull;
@@ -71,21 +72,21 @@ public class RtpCommand extends AbstractPlayerCommand {
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
 
         if (!settings.isEnabled()) {
-            context.sendMessage(Message.raw("You don't have permission to use /rtp."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_RTP));
             return;
         }
 
         if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, RTP, settings.getCooldownSeconds())) {
             long remaining = cooldownManager.getCooldownRemaining(playerUuid, RTP, settings.getCooldownSeconds());
-            context.sendMessage(Message.raw(String.format("You must wait %d seconds before using /rtp again.", remaining)));
+            context.sendMessage(ChatUtil.parse(Messages.COOLDOWN_RTP, remaining));
             return;
         }
 
-        context.sendMessage(Message.raw("Searching for a safe location..."));
+        context.sendMessage(ChatUtil.parse(Messages.INFO_RTP_SEARCHING));
 
         findSafeLocation(world, 0).thenAccept(location -> {
             if (location == null) {
-                playerRef.sendMessage(Message.raw("Could not find a safe location after " + MAX_ATTEMPTS + " attempts. Please try again."));
+                playerRef.sendMessage(ChatUtil.parse(Messages.ERROR_RTP_NO_SAFE_LOCATION, MAX_ATTEMPTS));
                 return;
             }
 
@@ -93,7 +94,7 @@ public class RtpCommand extends AbstractPlayerCommand {
             String displayName = String.format("random location (%.0f, %.0f, %.0f)", location.x(), location.y(), location.z());
             warmupManager.startWarmup(playerRef, store, ref, world, location, warmupSeconds, RTP, displayName, null);
         }).exceptionally(ex -> {
-            playerRef.sendMessage(Message.raw("An error occurred while finding a safe location."));
+            playerRef.sendMessage(ChatUtil.parse(Messages.ERROR_RTP_FAILED));
             return null;
         });
     }

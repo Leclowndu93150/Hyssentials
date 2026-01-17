@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
@@ -19,7 +18,9 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.BackManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import javax.annotation.Nonnull;
 
 public class TphereCommand extends AbstractPlayerCommand {
@@ -43,12 +44,12 @@ public class TphereCommand extends AbstractPlayerCommand {
         String targetName = targetArg.get(context);
         PlayerRef targetPlayer = Universe.get().getPlayerByUsername(targetName, NameMatching.STARTS_WITH_IGNORE_CASE);
         if (targetPlayer == null) {
-            context.sendMessage(Message.raw("Player not found: " + targetName));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_PLAYER_NOT_FOUND, targetName));
             return;
         }
         Ref<EntityStore> targetRef = targetPlayer.getReference();
         if (targetRef == null || !targetRef.isValid()) {
-            context.sendMessage(Message.raw("Target player is not available."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_TARGET_NOT_AVAILABLE));
             return;
         }
         Store<EntityStore> targetStore = targetRef.getStore();
@@ -56,7 +57,7 @@ public class TphereCommand extends AbstractPlayerCommand {
         TransformComponent myTransform = store.getComponent(ref, TransformComponent.getComponentType());
         HeadRotation myHeadRot = store.getComponent(ref, HeadRotation.getComponentType());
         if (myTransform == null) {
-            context.sendMessage(Message.raw("Could not get your position."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
             return;
         }
         Vector3d myPos = myTransform.getPosition().clone();
@@ -75,8 +76,8 @@ public class TphereCommand extends AbstractPlayerCommand {
             Teleport teleport = new Teleport(world, myPos, myBodyRot)
                 .setHeadRotation(myRot);
             targetStore.addComponent(targetRef, Teleport.getComponentType(), teleport);
-            targetPlayer.sendMessage(Message.raw(String.format("You have been teleported to %s.", playerRef.getUsername())));
+            targetPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_PLAYER_TELEPORTED_TO_YOU, playerRef.getUsername()));
         });
-        context.sendMessage(Message.raw(String.format("Teleported %s to you.", targetPlayer.getUsername())));
+        context.sendMessage(ChatUtil.parse(Messages.SUCCESS_TELEPORTED_PLAYER_TO_YOU, targetPlayer.getUsername()));
     }
 }

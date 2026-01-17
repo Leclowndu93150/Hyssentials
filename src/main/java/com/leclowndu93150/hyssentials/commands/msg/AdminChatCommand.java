@@ -2,14 +2,15 @@ package com.leclowndu93150.hyssentials.commands.msg;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.AdminChatGroup;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.AdminChatManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ public class AdminChatCommand extends AbstractPlayerCommand {
 
         List<AdminChatGroup> playerGroups = adminChatManager.getPlayerGroups(playerRef);
         if (playerGroups.isEmpty()) {
-            context.sendMessage(Message.raw("You don't have permission to use admin chat."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_ADMINCHAT));
             return;
         }
 
@@ -58,7 +59,7 @@ public class AdminChatCommand extends AbstractPlayerCommand {
         if (specifiedGroup != null && playerGroups.contains(specifiedGroup)) {
 
             if (messageParts.length < 2 || messageParts[1].isBlank()) {
-                context.sendMessage(Message.raw("Usage: /a " + specifiedGroup.getId() + " <message>"));
+                context.sendMessage(ChatUtil.parse(Messages.USAGE_ADMINCHAT_GROUP, specifiedGroup.getId()));
                 return;
             }
             targetGroup = specifiedGroup;
@@ -76,13 +77,12 @@ public class AdminChatCommand extends AbstractPlayerCommand {
 
     private void showUsage(@Nonnull CommandContext context, @Nonnull List<AdminChatGroup> groups) {
         if (groups.size() == 1) {
-            context.sendMessage(Message.raw("Usage: /a <message>"));
+            context.sendMessage(ChatUtil.parse(Messages.USAGE_ADMINCHAT));
         } else {
             String groupNames = groups.stream()
                 .map(AdminChatGroup::getId)
                 .collect(Collectors.joining(", "));
-            context.sendMessage(Message.raw("Usage: /a [group] <message>"));
-            context.sendMessage(Message.raw("Available groups: " + groupNames));
+            context.sendMessage(ChatUtil.parse(Messages.USAGE_ADMINCHAT_GROUPS, groupNames));
         }
     }
 }

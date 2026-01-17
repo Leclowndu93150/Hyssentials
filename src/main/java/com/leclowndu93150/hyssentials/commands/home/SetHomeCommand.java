@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
@@ -14,8 +13,10 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -42,7 +43,7 @@ public class SetHomeCommand extends AbstractPlayerCommand {
         UUID playerUuid = playerRef.getUuid();
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
         if (transform == null) {
-            context.sendMessage(Message.raw("Could not get your position."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
             return;
         }
         HeadRotation headRotation = store.getComponent(ref, HeadRotation.getComponentType());
@@ -51,13 +52,10 @@ public class SetHomeCommand extends AbstractPlayerCommand {
         int maxHomes = rankManager.getEffectiveMaxHomes(playerRef);
         boolean success = homeManager.setHome(playerUuid, name, world, position, rotation, maxHomes);
         if (success) {
-            context.sendMessage(Message.raw(String.format(
-                "Home '%s' set at %.1f, %.1f, %.1f in %s",
-                name, position.getX(), position.getY(), position.getZ(), world.getName())));
+            context.sendMessage(ChatUtil.parse(Messages.SUCCESS_HOME_SET,
+                name, position.getX(), position.getY(), position.getZ(), world.getName()));
         } else {
-            context.sendMessage(Message.raw(String.format(
-                "You have reached the maximum number of homes (%d). Delete one first using /delhome <name>",
-                maxHomes)));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_MAX_HOMES_REACHED, maxHomes));
         }
     }
 }

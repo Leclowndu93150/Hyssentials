@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
@@ -16,10 +15,12 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.LocationData;
 import com.leclowndu93150.hyssentials.data.TpaRequest;
 import com.leclowndu93150.hyssentials.data.TpaSettings;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
 import com.leclowndu93150.hyssentials.manager.TpaManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -47,17 +48,17 @@ public class TpacceptCommand extends AbstractPlayerCommand {
         TpaSettings settings = rankManager.getEffectiveTpaSettings(playerRef);
         TpaRequest request = tpaManager.acceptRequest(targetUuid, settings.getTimeoutSeconds());
         if (request == null) {
-            context.sendMessage(Message.raw("You have no pending teleport requests."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_NO_PENDING_TPA));
             return;
         }
         PlayerRef senderPlayer = Universe.get().getPlayer(request.sender());
         if (senderPlayer == null) {
-            context.sendMessage(Message.raw("The player who sent the request is no longer online."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_TPA_SENDER_OFFLINE));
             return;
         }
         Ref<EntityStore> senderRef = senderPlayer.getReference();
         if (senderRef == null || !senderRef.isValid()) {
-            context.sendMessage(Message.raw("The player who sent the request is no longer available."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_TPA_SENDER_NOT_AVAILABLE));
             return;
         }
         Store<EntityStore> senderStore = senderRef.getStore();
@@ -67,7 +68,7 @@ public class TpacceptCommand extends AbstractPlayerCommand {
             TransformComponent targetTransform = store.getComponent(ref, TransformComponent.getComponentType());
             HeadRotation targetHeadRot = store.getComponent(ref, HeadRotation.getComponentType());
             if (targetTransform == null) {
-                context.sendMessage(Message.raw("Could not get your position."));
+                context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
                 return;
             }
             Vector3d targetPos = targetTransform.getPosition().clone();
@@ -76,12 +77,12 @@ public class TpacceptCommand extends AbstractPlayerCommand {
 
             TpaSettings senderSettings = rankManager.getEffectiveTpaSettings(senderPlayer);
             warmupManager.startWarmup(senderPlayer, senderStore, senderRef, senderWorld, destination, senderSettings.getWarmupSeconds(), CooldownManager.TPA, playerRef.getUsername(), null);
-            context.sendMessage(Message.raw(String.format("Teleport request from %s accepted.", senderPlayer.getUsername())));
+            context.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_ACCEPTED, senderPlayer.getUsername()));
         } else {
             TransformComponent senderTransform = senderStore.getComponent(senderRef, TransformComponent.getComponentType());
             HeadRotation senderHeadRot = senderStore.getComponent(senderRef, HeadRotation.getComponentType());
             if (senderTransform == null) {
-                context.sendMessage(Message.raw("Could not get sender's position."));
+                context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_TARGET_POSITION));
                 return;
             }
             Vector3d senderPos = senderTransform.getPosition().clone();
@@ -89,7 +90,7 @@ public class TpacceptCommand extends AbstractPlayerCommand {
             LocationData destination = new LocationData(senderWorld.getName(), senderPos.getX(), senderPos.getY(), senderPos.getZ(), senderRot.getPitch(), senderRot.getYaw());
 
             warmupManager.startWarmup(playerRef, store, ref, world, destination, settings.getWarmupSeconds(), CooldownManager.TPA, senderPlayer.getUsername(), null);
-            senderPlayer.sendMessage(Message.raw(String.format("%s accepted your teleport request.", playerRef.getUsername())));
+            senderPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_ACCEPTED_NOTIFY, playerRef.getUsername()));
         }
     }
 }

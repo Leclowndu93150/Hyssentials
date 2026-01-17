@@ -2,14 +2,15 @@ package com.leclowndu93150.hyssentials.commands.home;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -35,14 +36,14 @@ public class HomesCommand extends AbstractPlayerCommand {
         UUID playerUuid = playerRef.getUuid();
         Set<String> homes = homeManager.getHomeNames(playerUuid);
         if (homes.isEmpty()) {
-            context.sendMessage(Message.raw("You have no homes set. Use /sethome to create one."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_NO_HOMES));
             return;
         }
         int count = homes.size();
         int max = rankManager.getEffectiveMaxHomes(playerRef);
-        context.sendMessage(Message.raw(String.format("Your homes (%d/%d):", count, max)));
+        context.sendMessage(ChatUtil.parse(Messages.INFO_HOMES_LIST, count, max));
         for (String home : homes) {
-            context.sendMessage(Message.raw("  - " + home));
+            context.sendMessage(ChatUtil.parse("<gray>  - " + home + "</gray>"));
         }
     }
 }

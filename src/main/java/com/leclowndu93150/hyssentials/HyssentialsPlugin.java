@@ -42,6 +42,7 @@ import com.leclowndu93150.hyssentials.manager.VanishManager;
 import com.leclowndu93150.hyssentials.manager.JoinMessageManager;
 import com.leclowndu93150.hyssentials.commands.admin.VanishCommand;
 import com.leclowndu93150.hyssentials.system.PlayerDeathBackSystem;
+import com.leclowndu93150.hyssentials.lang.LanguageManager;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.AddPlayerToWorldEvent;
@@ -76,6 +77,11 @@ public class HyssentialsPlugin extends JavaPlugin {
 
         HyssentialsConfig cfg = this.config.get();
         this.config.save();
+
+        // Initialize language system
+        LanguageManager.init(this.getDataDirectory(), this.getLogger());
+        LanguageManager.exportDefaultLanguages();
+        LanguageManager.setLanguage(cfg.getLanguage());
 
         this.dataManager = new DataManager(this.getDataDirectory(), this.getLogger());
         this.rankManager = new RankManager(this.getDataDirectory(), this.getLogger(), cfg.getDefaultRankId());
@@ -178,5 +184,8 @@ public class HyssentialsPlugin extends JavaPlugin {
         if (this.joinMessageManager != null) {
             this.joinMessageManager.reload();
         }
+        // Reload language
+        LanguageManager.setLanguage(this.config.get().getLanguage());
+        LanguageManager.reload();
     }
 }

@@ -2,7 +2,6 @@ package com.leclowndu93150.hyssentials.commands.admin;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
@@ -13,7 +12,9 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.Rank;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import com.leclowndu93150.hyssentials.util.Permissions;
 import javax.annotation.Nonnull;
 
@@ -32,7 +33,7 @@ public class RemoveRankSubCommand extends AbstractPlayerCommand {
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
                           @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef sender, @Nonnull World world) {
         if (!Permissions.canSetRanks(sender)) {
-            context.sendMessage(Message.raw("You don't have permission to remove ranks."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_REMOVERANK));
             return;
         }
 
@@ -41,20 +42,19 @@ public class RemoveRankSubCommand extends AbstractPlayerCommand {
 
         PlayerRef targetPlayer = Universe.get().getPlayerByUsername(targetName, NameMatching.STARTS_WITH_IGNORE_CASE);
         if (targetPlayer == null) {
-            context.sendMessage(Message.raw("Player not found: " + targetName));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_PLAYER_NOT_FOUND, targetName));
             return;
         }
 
         Rank rank = rankManager.getRankById(rankId);
         if (rank == null) {
-            context.sendMessage(Message.raw("Rank not found: " + rankId));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_RANK_NOT_FOUND, rankId));
             return;
         }
 
         rankManager.revokeRankPermission(targetPlayer.getUuid(), rankId);
-        context.sendMessage(Message.raw(String.format(
-            "Removed rank '%s' from player %s.",
-            rank.getDisplayName(), targetPlayer.getUsername())));
-        targetPlayer.sendMessage(Message.raw(String.format("Your %s rank has been removed.", rank.getDisplayName())));
+        context.sendMessage(ChatUtil.parse(Messages.SUCCESS_RANK_REMOVED,
+            rank.getDisplayName(), targetPlayer.getUsername()));
+        targetPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_YOUR_RANK_REMOVED, rank.getDisplayName()));
     }
 }

@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
@@ -15,7 +14,9 @@ import com.hypixel.hytale.server.core.permissions.HytalePermissions;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.WarpManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import javax.annotation.Nonnull;
 
 public class SetWarpCommand extends AbstractPlayerCommand {
@@ -39,15 +40,14 @@ public class SetWarpCommand extends AbstractPlayerCommand {
         String name = nameArg.get(context);
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
         if (transform == null) {
-            context.sendMessage(Message.raw("Could not get your position."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
             return;
         }
         HeadRotation headRotation = store.getComponent(ref, HeadRotation.getComponentType());
         Vector3f rotation = headRotation != null ? headRotation.getRotation() : new Vector3f(0, 0, 0);
         Vector3d position = transform.getPosition();
         warpManager.setWarp(name, world, position, rotation);
-        context.sendMessage(Message.raw(String.format(
-            "Warp '%s' set at %.1f, %.1f, %.1f in %s",
-            name, position.getX(), position.getY(), position.getZ(), world.getName())));
+        context.sendMessage(ChatUtil.parse(Messages.SUCCESS_WARP_SET,
+            name, position.getX(), position.getY(), position.getZ(), world.getName()));
     }
 }
