@@ -3,7 +3,6 @@ package com.leclowndu93150.hyssentials.commands.tpa;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
@@ -15,8 +14,10 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.TpaRequest;
 import com.leclowndu93150.hyssentials.data.TpaSettings;
 import com.leclowndu93150.hyssentials.gui.TpaPlayerListGui;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TpaManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -64,37 +65,36 @@ public class TpaCommand extends AbstractPlayerCommand {
         TpaSettings settings = rankManager.getEffectiveTpaSettings(playerRef);
 
         if (!settings.isEnabled()) {
-            context.sendMessage(Message.raw("You don't have permission to use /tpa."));
+            context.sendMessage(ChatUtil.parse(Messages.NO_PERMISSION_TPA));
             return;
         }
 
         if (tpaManager.isOnCooldown(senderUuid, settings.getCooldownSeconds())) {
             long remaining = tpaManager.getCooldownRemaining(senderUuid, settings.getCooldownSeconds());
-            context.sendMessage(Message.raw(String.format("You must wait %d seconds before sending another request.", remaining)));
+            context.sendMessage(ChatUtil.parse(Messages.COOLDOWN_TPA, remaining));
             return;
         }
 
         PlayerRef targetPlayer = Universe.get().getPlayerByUsername(targetName, NameMatching.STARTS_WITH_IGNORE_CASE);
         if (targetPlayer == null) {
-            context.sendMessage(Message.raw("Player not found: " + targetName));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_PLAYER_NOT_FOUND, targetName));
             return;
         }
 
         if (targetPlayer.getUuid().equals(senderUuid)) {
-            context.sendMessage(Message.raw("You cannot send a teleport request to yourself."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_TELEPORT_SELF));
             return;
         }
 
         boolean sent = tpaManager.sendRequest(senderUuid, targetPlayer.getUuid(), TpaRequest.TpaType.TPA, settings.getTimeoutSeconds());
         if (!sent) {
-            context.sendMessage(Message.raw("You already have a pending request to this player."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_ALREADY_PENDING_TPA));
             return;
         }
 
         tpaManager.setCooldown(senderUuid);
-        context.sendMessage(Message.raw(String.format("Teleport request sent to %s.", targetPlayer.getUsername())));
-        targetPlayer.sendMessage(Message.raw(String.format(
-            "%s has requested to teleport to you. Type /tpaccept to accept or /tpdeny to deny. Expires in %d seconds.",
-            playerRef.getUsername(), settings.getTimeoutSeconds())));
+        context.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_SENT, targetPlayer.getUsername()));
+        targetPlayer.sendMessage(ChatUtil.parse(Messages.INFO_TPA_REQUEST_RECEIVED,
+            playerRef.getUsername(), settings.getTimeoutSeconds()));
     }
 }

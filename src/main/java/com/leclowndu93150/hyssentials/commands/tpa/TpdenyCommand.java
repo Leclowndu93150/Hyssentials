@@ -2,7 +2,6 @@ package com.leclowndu93150.hyssentials.commands.tpa;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -10,7 +9,9 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.TpaRequest;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.TpaManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -34,14 +35,14 @@ public class TpdenyCommand extends AbstractPlayerCommand {
         int timeoutSeconds = tpaManager.getSettingsForPlayer(playerRef).getTimeoutSeconds();
         TpaRequest request = tpaManager.getRequest(targetUuid, timeoutSeconds);
         if (request == null) {
-            context.sendMessage(Message.raw("You have no pending teleport requests."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_NO_PENDING_TPA));
             return;
         }
         tpaManager.denyRequest(targetUuid);
         PlayerRef senderPlayer = Universe.get().getPlayer(request.sender());
         if (senderPlayer != null) {
-            senderPlayer.sendMessage(Message.raw(String.format("%s denied your teleport request.", playerRef.getUsername())));
+            senderPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_DENIED_NOTIFY, playerRef.getUsername()));
         }
-        context.sendMessage(Message.raw("Teleport request denied."));
+        context.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_DENIED));
     }
 }

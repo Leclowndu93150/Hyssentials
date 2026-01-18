@@ -1,0 +1,185 @@
+{
+  "error": {
+    "no_permission": {
+      "vanish": "<red>Vous n'avez pas la permission d'utiliser /vanish.</red>",
+      "home": "<red>Vous n'avez pas la permission d'utiliser /home.</red>",
+      "spawn": "<red>Vous n'avez pas la permission d'utiliser /spawn.</red>",
+      "back": "<red>Vous n'avez pas la permission d'utiliser /back.</red>",
+      "rtp": "<red>Vous n'avez pas la permission d'utiliser /rtp.</red>",
+      "tpa": "<red>Vous n'avez pas la permission d'utiliser /tpa.</red>",
+      "tpahere": "<red>Vous n'avez pas la permission d'utiliser /tpahere.</red>",
+      "warp": "<red>Vous n'avez pas la permission d'utiliser /warp.</red>",
+      "reload": "<red>Vous n'avez pas la permission de recharger la configuration.</red>",
+      "rank": "<red>Vous n'avez pas la permission de gérer les rangs.</red>",
+      "assign": "<red>Vous n'avez pas la permission d'assigner des rangs.</red>",
+      "setrank": "<red>Vous n'avez pas la permission de définir des rangs.</red>",
+      "removerank": "<red>Vous n'avez pas la permission de retirer des rangs.</red>",
+      "playerinfo": "<red>Vous n'avez pas la permission de voir les infos des joueurs.</red>",
+      "adminchat": "<red>Vous n'avez pas la permission d'utiliser le chat admin.</red>"
+    },
+    "player_not_found": "<red>Joueur introuvable : <yellow>%s</yellow></red>",
+    "cannot_teleport_self": "<red>Vous ne pouvez pas vous téléporter vers vous-même.</red>",
+    "target_not_available": "<red>Le joueur cible n'est pas disponible.</red>",
+    "cannot_get_position": "<red>Impossible d'obtenir votre position.</red>",
+    "cannot_get_target_position": "<red>Impossible d'obtenir la position de la cible.</red>",
+    "rank_not_found": "<red>Rang introuvable : <yellow>%s</yellow></red>",
+    "reload_failed": "<red>Erreur lors du rechargement de la configuration : <yellow>%s</yellow></red>",
+    "home_not_found": "<red>Home '<yellow>%s</yellow>' introuvable. Utilisez <yellow>/sethome %s</yellow> pour le créer.</red>",
+    "warp_not_found": "<red>Warp '<yellow>%s</yellow>' introuvable. Utilisez <yellow>/warps</yellow> pour voir les warps disponibles.</red>",
+    "max_homes_reached": "<red>Vous avez atteint le nombre maximum de homes (<yellow>%d</yellow>). Supprimez-en un avec <yellow>/delhome <nom></yellow></red>",
+    "no_homes": "<red>Vous n'avez aucun home. Utilisez <yellow>/sethome</yellow> pour en créer un.</red>",
+    "no_warps": "<red>Aucun warp n'a été défini. Utilisez <yellow>/setwarp <nom></yellow> pour en créer un.</red>",
+    "no_back_location": "<red>Aucun emplacement précédent où retourner.</red>",
+    "rtp_no_safe_location": "<red>Impossible de trouver un emplacement sûr après <yellow>%d</yellow> tentatives. Veuillez réessayer.</red>",
+    "rtp_failed": "<red>Une erreur s'est produite lors de la recherche d'un emplacement sûr.</red>",
+    "cannot_message_self": "<red>Vous ne pouvez pas vous envoyer un message.</red>",
+    "no_reply_target": "<red>Vous n'avez personne à qui répondre.</red>",
+    "reply_target_offline": "<red>Ce joueur n'est plus en ligne.</red>",
+    "no_pending_tpa": "<red>Vous n'avez aucune demande de téléportation en attente.</red>",
+    "tpa_sender_offline": "<red>Le joueur qui a envoyé la demande n'est plus en ligne.</red>",
+    "tpa_sender_not_available": "<red>Le joueur qui a envoyé la demande n'est plus disponible.</red>",
+    "already_pending_tpa": "<red>Vous avez déjà une demande en attente vers ce joueur.</red>",
+    "no_tpa_to_cancel": "<red>Vous n'avez aucune demande de téléportation à annuler.</red>",
+    "warmup_failed": "<red>Échec du démarrage de la téléportation.</red>",
+    "chunk_load_failed": "<red>Échec du chargement du chunk de destination. Téléportation annulée.</red>"
+  },
+  "cooldown": {
+    "home": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'utiliser /home à nouveau.</orange>",
+    "spawn": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'utiliser /spawn à nouveau.</orange>",
+    "back": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'utiliser /back à nouveau.</orange>",
+    "rtp": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'utiliser /rtp à nouveau.</orange>",
+    "warp": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'utiliser /warp à nouveau.</orange>",
+    "tpa": "<orange>Vous devez attendre <yellow>%d</yellow> secondes avant d'envoyer une autre demande.</orange>"
+  },
+  "success": {
+    "vanish_enabled": "<green>Vous êtes maintenant invisible. Les autres joueurs ne peuvent pas vous voir.</green>",
+    "vanish_disabled": "<green>Vous n'êtes plus invisible. Les autres joueurs peuvent maintenant vous voir.</green>",
+    "config_reloaded": "<green>Configuration et rangs rechargés avec succès.</green>",
+    "home_set": "<green>Home '<yellow>%s</yellow>' défini à <gray>%.1f, %.1f, %.1f</gray> dans <yellow>%s</yellow></green>",
+    "home_deleted": "<green>Home '<yellow>%s</yellow>' a été supprimé.</green>",
+    "warp_set": "<green>Warp '<yellow>%s</yellow>' défini à <gray>%.1f, %.1f, %.1f</gray> dans <yellow>%s</yellow></green>",
+    "warp_deleted": "<green>Warp '<yellow>%s</yellow>' a été supprimé.</green>",
+    "spawn_set": "<green>Spawn du monde défini à <gray>%s, %s, %s</gray> <gray>(rotation: %s, %s, %s)</gray></green>",
+    "teleporting": "<green>Téléportation vers <yellow>%s</yellow>.</green>",
+    "teleported": "<green>Téléporté vers <yellow>%s</yellow> !</green>",
+    "teleported_to_player": "<green>Téléportation vers <yellow>%s</yellow>.</green>",
+    "teleported_player_to_you": "<green><yellow>%s</yellow> a été téléporté vers vous.</green>",
+    "player_teleported_to_you": "<green>Vous avez été téléporté vers <yellow>%s</yellow>.</green>",
+    "rank_granted": "<green>Rang '<yellow>%s</yellow>' accordé au joueur <yellow>%s</yellow>. <gray>Permission : %s</gray></green>",
+    "rank_removed": "<green>Rang '<yellow>%s</yellow>' retiré du joueur <yellow>%s</yellow>.</green>",
+    "you_received_rank": "<green>Vous avez reçu le rang <yellow>%s</yellow>.</green>",
+    "your_rank_removed": "<orange>Votre rang <yellow>%s</yellow> a été retiré.</orange>",
+    "tpa_sent": "<green>Demande de téléportation envoyée à <yellow>%s</yellow>.</green>",
+    "tpa_accepted": "<green>Demande de téléportation de <yellow>%s</yellow> acceptée.</green>",
+    "tpa_accepted_notify": "<green><yellow>%s</yellow> a accepté votre demande de téléportation.</green>",
+    "tpa_denied": "<green>Demande de téléportation refusée.</green>",
+    "tpa_denied_notify": "<orange><yellow>%s</yellow> a refusé votre demande de téléportation.</orange>",
+    "tpa_cancelled": "<green>Votre demande de téléportation a été annulée.</green>"
+  },
+  "info": {
+    "vanish_reminder": "<gray>Rappel : Vous êtes actuellement invisible. Les autres joueurs ne peuvent pas vous voir.</gray>",
+    "rtp_searching": "<gray>Recherche d'un emplacement sûr...</gray>",
+    "warmup_started": "<orange>Téléportation vers <yellow>%s</yellow> dans <yellow>%d</yellow> secondes... Ne bougez pas !</orange>",
+    "warmup_cancelled": "<orange>Téléportation annulée - vous avez bougé !</orange>",
+    "tpa_request_received": "<orange><yellow>%s</yellow> a demandé à se téléporter vers vous. Tapez <yellow>/tpaccept</yellow> pour accepter ou <yellow>/tpdeny</yellow> pour refuser. Expire dans <yellow>%d</yellow> secondes.</orange>",
+    "tpahere_request_received": "<orange><yellow>%s</yellow> vous demande de vous téléporter vers lui. Tapez <yellow>/tpaccept</yellow> pour accepter ou <yellow>/tpdeny</yellow> pour refuser. Expire dans <yellow>%d</yellow> secondes.</orange>",
+    "homes_list": "<gray>Vos homes (<yellow>%d</yellow>/<yellow>%d</yellow>) :</gray>",
+    "warps_list": "<gray>Warps du serveur (<yellow>%d</yellow>) :</gray>",
+    "player_info_header": "<yellow>=== Info Joueur : %s ===</yellow>",
+    "player_info_uuid": "<gray>  UUID : <yellow>%s</yellow></gray>",
+    "player_info_rank": "<gray>  Rang : <yellow>%s</yellow> (id: %s)</gray>",
+    "player_info_permission": "<gray>  Permission : <yellow>%s</yellow></gray>",
+    "player_info_homes": "<gray>  Homes : <yellow>%d</yellow>/<yellow>%d</yellow></gray>",
+    "player_info_cooldown": "<gray>  Cooldown Home : <yellow>%d</yellow>s</gray>",
+    "player_info_warmup": "<gray>  Warmup : <yellow>%d</yellow>s</gray>"
+  },
+  "usage": {
+    "msg": "<orange>Utilisation : <yellow>/msg <joueur> <message></yellow></orange>",
+    "reply": "<orange>Utilisation : <yellow>/r <message></yellow></orange>",
+    "adminchat": "<orange>Utilisation : <yellow>/a <message></yellow></orange>",
+    "adminchat_group": "<orange>Utilisation : <yellow>/a %s <message></yellow></orange>",
+    "adminchat_groups": "<orange>Utilisation : <yellow>/a [groupe] <message></yellow>\nGroupes disponibles : <yellow>%s</yellow></orange>"
+  },
+  "pm": {
+    "to": "<gray>[Vers <yellow>%s</yellow>] </gray>",
+    "from": "<gray>[De <yellow>%s</yellow>] </gray>"
+  },
+  "ui": {
+    "home_list": {
+      "title": "Vos Homes",
+      "title_count": "Vos Homes (%d/%d)"
+    },
+    "warp_list": {
+      "title": "Warps du Serveur"
+    },
+    "rank_list": {
+      "title": "Gestion des Rangs"
+    },
+    "rank_editor": {
+      "title_new": "Créer un Nouveau Rang",
+      "title_edit": "Modifier le Rang : %s"
+    },
+    "tpa_list": {
+      "title": "Demandes de Téléportation",
+      "title_tpa": "Se Téléporter vers un Joueur",
+      "title_tpahere": "Demander un Joueur Ici",
+      "no_players": "Aucun autre joueur en ligne",
+      "request_received": "%s a demandé à se téléporter vers vous. Tapez /tpaccept pour accepter ou /tpdeny pour refuser. Expire dans %d secondes.",
+      "request_here_received": "%s vous demande de vous téléporter vers lui. Tapez /tpaccept pour accepter ou /tpdeny pour refuser. Expire dans %d secondes."
+    },
+    "player_assign": {
+      "title": "Assigner des Rangs"
+    },
+    "btn": {
+      "close": "Fermer",
+      "teleport": "Téléporter",
+      "delete_confirm": "?",
+      "create_new": "Créer",
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "label": {
+      "permission": "Permission : ",
+      "id_prefix": "ID : ",
+      "priority_prefix": "Priorité : ",
+      "id": "ID",
+      "id_desc": "Identifiant unique (minuscules, sans espaces)",
+      "display_name": "NOM D'AFFICHAGE",
+      "priority": "PRIORITÉ",
+      "priority_desc": "Priorité élevée = vérifié en premier (0-100)",
+      "max_homes": "MAX HOMES",
+      "enabled": "Activé",
+      "cooldown": "Délai :",
+      "warmup": "Préparation :",
+      "timeout": "Expiration :",
+      "current_rank": "Actuel : "
+    },
+    "section": {
+      "home_command": "COMMANDE HOME",
+      "warp_command": "COMMANDE WARP",
+      "spawn_command": "COMMANDE SPAWN",
+      "back_command": "COMMANDE BACK",
+      "tpa_command": "COMMANDE TPA",
+      "rtp_command": "COMMANDE RTP (Téléportation Aléatoire)",
+      "permissions": "PERMISSIONS ACCORDÉES",
+      "permissions_desc": "Permissions supplémentaires accordées aux joueurs avec ce rang"
+    },
+    "error": {
+      "no_home_permission": "Vous n'avez pas la permission d'utiliser les homes.",
+      "home_cooldown": "Vous devez attendre %d secondes avant d'utiliser /home à nouveau.",
+      "home_not_found": "Home '%s' introuvable.",
+      "no_warp_permission": "Vous n'avez pas la permission d'utiliser les warps.",
+      "warp_cooldown": "Vous devez attendre %d secondes avant d'utiliser /warp à nouveau.",
+      "warp_not_found": "Warp '%s' introuvable.",
+      "no_tpa_permission": "Vous n'avez pas la permission d'utiliser %s.",
+      "tpa_cooldown": "Vous devez attendre %d secondes avant d'envoyer une autre demande.",
+      "invalid_player": "Joueur invalide.",
+      "player_offline": "Le joueur n'est plus en ligne.",
+      "already_pending": "Vous avez déjà une demande en attente vers ce joueur."
+    },
+    "success": {
+      "tpa_sent": "Demande de téléportation envoyée à %s."
+    }
+  }
+}

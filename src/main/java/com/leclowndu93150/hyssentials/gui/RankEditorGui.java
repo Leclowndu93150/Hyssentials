@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.Rank;
 import com.leclowndu93150.hyssentials.data.TpaSettings;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -141,7 +142,7 @@ public class RankEditorGui extends InteractiveCustomUIPage<RankEditorGui.EditorD
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/Hyssentials_RankEditor.ui");
 
-        cmd.set("#TitleLabel.Text", isNewRank ? "Create New Rank" : "Edit Rank: " + displayName);
+        cmd.set("#TitleLabel.Text", isNewRank ? Messages.UI_RANK_EDITOR_TITLE_NEW.get() : Messages.UI_RANK_EDITOR_TITLE_EDIT.get(displayName));
 
         cmd.set("#IdField.Value", id);
         cmd.set("#DisplayNameField.Value", displayName);

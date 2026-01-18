@@ -6,18 +6,20 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 
 public class HyssentialsConfig {
-    public static final int CONFIG_VERSION = 4;
+    public static final int CONFIG_VERSION = 5;
 
     public static final BuilderCodec<HyssentialsConfig> CODEC = BuilderCodec
         .builder(HyssentialsConfig.class, HyssentialsConfig::new)
         .append(new KeyedCodec<>("ConfigVersion", Codec.INTEGER), HyssentialsConfig::setConfigVersion, HyssentialsConfig::getConfigVersion).add()
         .append(new KeyedCodec<>("BackHistorySize", Codec.INTEGER), HyssentialsConfig::setBackHistorySize, HyssentialsConfig::getBackHistorySize).add()
         .append(new KeyedCodec<>("DefaultRankId", Codec.STRING), HyssentialsConfig::setDefaultRankId, HyssentialsConfig::getDefaultRankId).add()
+        .append(new KeyedCodec<>("Language", Codec.STRING), HyssentialsConfig::setLanguage, HyssentialsConfig::getLanguage).add()
         .build();
 
     private int configVersion = CONFIG_VERSION;
     private int backHistorySize = 5;
     private String defaultRankId = "default";
+    private String language = "en";
 
     public HyssentialsConfig() {
     }
@@ -44,5 +46,13 @@ public class HyssentialsConfig {
 
     public void setDefaultRankId(String defaultRankId) {
         this.defaultRankId = defaultRankId;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

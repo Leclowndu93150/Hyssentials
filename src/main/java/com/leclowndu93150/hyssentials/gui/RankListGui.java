@@ -15,6 +15,7 @@ import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.Rank;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,6 +34,10 @@ public class RankListGui extends InteractiveCustomUIPage<RankListGui.RankListDat
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder cmd,
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/Hyssentials_RankList.ui");
+
+        cmd.set("#TitleLabel.Text", Messages.UI_RANK_LIST_TITLE.get());
+        cmd.set("#CreateButton.Text", Messages.UI_BTN_CREATE_NEW.get());
+        cmd.set("#CloseButton.Text", Messages.UI_BTN_CLOSE.get());
 
         events.addEventBinding(CustomUIEventBindingType.Activating, "#CreateButton",
             EventData.of("Action", "Create"), false);
@@ -53,9 +58,10 @@ public class RankListGui extends InteractiveCustomUIPage<RankListGui.RankListDat
             cmd.append("#RankList", "Pages/Hyssentials_RankEntry.ui");
 
             cmd.set("#RankList[" + i + "] #RankName.Text", rank.getDisplayName());
-            cmd.set("#RankList[" + i + "] #RankId.Text", "ID: " + rank.getId());
-            cmd.set("#RankList[" + i + "] #RankPriority.Text", "Priority: " + rank.getPriority());
+            cmd.set("#RankList[" + i + "] #RankId.Text", Messages.UI_LABEL_ID_PREFIX.get() + rank.getId());
+            cmd.set("#RankList[" + i + "] #RankPriority.Text", Messages.UI_LABEL_PRIORITY_PREFIX.get() + rank.getPriority());
             cmd.set("#RankList[" + i + "] #RankPermission.Text", rank.getPermission());
+            cmd.set("#RankList[" + i + "] #EditButton.Text", Messages.UI_BTN_EDIT.get());
 
             events.addEventBinding(CustomUIEventBindingType.Activating, "#RankList[" + i + "] #EditButton",
                 EventData.of("Action", "Edit:" + rank.getId()), false);
@@ -63,7 +69,7 @@ public class RankListGui extends InteractiveCustomUIPage<RankListGui.RankListDat
             if (rank.getId().equals("default")) {
                 cmd.set("#RankList[" + i + "] #DeleteButton.Visible", false);
             } else if (deleteConfirmIndex == i) {
-                cmd.set("#RankList[" + i + "] #DeleteButton.Text", "?");
+                cmd.set("#RankList[" + i + "] #DeleteButton.Text", Messages.UI_BTN_DELETE_CONFIRM.get());
                 events.addEventBinding(CustomUIEventBindingType.Activating, "#RankList[" + i + "] #DeleteButton",
                     EventData.of("Action", "ConfirmDelete:" + rank.getId()), false);
                 events.addEventBinding(CustomUIEventBindingType.MouseExited, "#RankList[" + i + "] #DeleteButton",

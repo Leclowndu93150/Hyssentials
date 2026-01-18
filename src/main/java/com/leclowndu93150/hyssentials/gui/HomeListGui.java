@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
@@ -56,7 +57,7 @@ public class HomeListGui extends InteractiveCustomUIPage<HomeListGui.HomeListDat
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         int count = homeManager.getHomeCount(playerUuid);
         int max = rankManager.getEffectiveMaxHomes(playerRef);
-        cmd.set("#TitleLabel.Text", String.format("Your Homes (%d/%d)", count, max));
+        cmd.set("#TitleLabel.Text", Messages.UI_HOME_LIST_TITLE_COUNT.get(count, max));
 
         events.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton",
             EventData.of("Action", "Close"), false);
@@ -87,7 +88,7 @@ public class HomeListGui extends InteractiveCustomUIPage<HomeListGui.HomeListDat
                 EventData.of("Action", "Teleport:" + homeName), false);
 
             if (deleteConfirmIndex == i) {
-                cmd.set("#HomeList[" + i + "] #DeleteButton.Text", "?");
+                cmd.set("#HomeList[" + i + "] #DeleteButton.Text", Messages.UI_BTN_DELETE_CONFIRM.get());
                 events.addEventBinding(CustomUIEventBindingType.Activating, "#HomeList[" + i + "] #DeleteButton",
                     EventData.of("Action", "ConfirmDelete:" + homeName), false);
                 events.addEventBinding(CustomUIEventBindingType.MouseExited, "#HomeList[" + i + "] #DeleteButton",
@@ -153,7 +154,7 @@ public class HomeListGui extends InteractiveCustomUIPage<HomeListGui.HomeListDat
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         int count = homeManager.getHomeCount(playerUuid);
         int max = rankManager.getEffectiveMaxHomes(playerRef);
-        cmd.set("#TitleLabel.Text", String.format("Your Homes (%d/%d)", count, max));
+        cmd.set("#TitleLabel.Text", Messages.UI_HOME_LIST_TITLE_COUNT.get(count, max));
 
         buildHomeList(cmd, events);
         this.sendUpdate(cmd, events, false);
@@ -168,19 +169,19 @@ public class HomeListGui extends InteractiveCustomUIPage<HomeListGui.HomeListDat
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
 
         if (!settings.isEnabled()) {
-            playerRef.sendMessage(Message.raw("You don't have permission to use homes."));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_NO_HOME_PERMISSION.get()));
             return;
         }
 
         if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, CooldownManager.HOME, settings.getCooldownSeconds())) {
             long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.HOME, settings.getCooldownSeconds());
-            playerRef.sendMessage(Message.raw(String.format("You must wait %d seconds before using /home again.", remaining)));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_HOME_COOLDOWN.get(remaining)));
             return;
         }
 
         LocationData home = homeManager.getHome(playerUuid, homeName);
         if (home == null) {
-            playerRef.sendMessage(Message.raw(String.format("Home '%s' not found.", homeName)));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_HOME_NOT_FOUND.get(homeName)));
             return;
         }
 

@@ -2,7 +2,6 @@ package com.leclowndu93150.hyssentials.commands.home;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
@@ -10,7 +9,9 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.HomeManager;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -35,9 +36,9 @@ public class DelHomeCommand extends AbstractPlayerCommand {
         UUID playerUuid = playerRef.getUuid();
         boolean deleted = homeManager.deleteHome(playerUuid, name);
         if (deleted) {
-            context.sendMessage(Message.raw(String.format("Home '%s' has been deleted.", name)));
+            context.sendMessage(ChatUtil.parse(Messages.SUCCESS_HOME_DELETED, name));
         } else {
-            context.sendMessage(Message.raw(String.format("Home '%s' not found.", name)));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_HOME_NOT_FOUND, name, name));
         }
     }
 }

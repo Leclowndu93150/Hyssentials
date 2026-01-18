@@ -20,6 +20,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.leclowndu93150.hyssentials.data.Rank;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 
 import javax.annotation.Nonnull;
@@ -44,6 +45,7 @@ public class PlayerRankAssignGui extends InteractiveCustomUIPage<PlayerRankAssig
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/Hyssentials_PlayerAssign.ui");
 
+        cmd.set("#TitleLabel.Text", Messages.UI_PLAYER_ASSIGN_TITLE.get());
         cmd.set("#SearchInput.Value", this.searchQuery);
         events.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchInput",
             EventData.of("@SearchQuery", "#SearchInput.Value"), false);
@@ -82,7 +84,7 @@ public class PlayerRankAssignGui extends InteractiveCustomUIPage<PlayerRankAssig
             cmd.append("#PlayerList", "Pages/Hyssentials_PlayerAssignEntry.ui");
 
             cmd.set("#PlayerList[" + i + "] #PlayerName.Text", playerName);
-            cmd.set("#PlayerList[" + i + "] #CurrentRank.Text", "Current: " + currentRank.getDisplayName());
+            cmd.set("#PlayerList[" + i + "] #CurrentRank.Text", Messages.UI_LABEL_CURRENT_RANK.get() + currentRank.getDisplayName());
 
             String selectedRank = selectedRanks.getOrDefault(playerName, currentRank.getId());
             cmd.set("#PlayerList[" + i + "] #RankDropdown.Entries", rankEntries);

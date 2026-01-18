@@ -1,8 +1,9 @@
 package com.leclowndu93150.hyssentials.manager;
 
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
+import com.leclowndu93150.hyssentials.lang.Messages;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class VanishManager {
         }
 
         if (isVanished(joiningPlayer.getUuid())) {
-            joiningPlayer.sendMessage(Message.raw("Reminder: You are currently vanished. Other players cannot see you."));
+            joiningPlayer.sendMessage(ChatUtil.parse(Messages.INFO_VANISH_REMINDER));
         }
     }
 

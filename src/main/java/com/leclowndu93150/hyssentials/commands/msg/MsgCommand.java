@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.PrivateMessageManager;
 import com.leclowndu93150.hyssentials.util.ChatUtil;
 import javax.annotation.Nonnull;
@@ -39,19 +40,19 @@ public class MsgCommand extends AbstractPlayerCommand {
 
         PlayerRef targetPlayer = Universe.get().getPlayerByUsername(targetName, NameMatching.STARTS_WITH_IGNORE_CASE);
         if (targetPlayer == null) {
-            context.sendMessage(Message.raw("Player not found: " + targetName));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_PLAYER_NOT_FOUND, targetName));
             return;
         }
 
         if (targetPlayer.getUuid().equals(playerRef.getUuid())) {
-            context.sendMessage(Message.raw("You cannot message yourself."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_MESSAGE_SELF));
             return;
         }
 
         String inputString = context.getInputString().trim();
         String[] parts = inputString.split("\\s+", 3);
         if (parts.length < 3 || parts[2].isBlank()) {
-            context.sendMessage(Message.raw("Usage: /msg <player> <message>"));
+            context.sendMessage(ChatUtil.parse(Messages.USAGE_MSG));
             return;
         }
         String message = parts[2];

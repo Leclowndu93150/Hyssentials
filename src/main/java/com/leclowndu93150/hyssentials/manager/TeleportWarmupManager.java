@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
@@ -14,6 +13,8 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
+import com.leclowndu93150.hyssentials.util.ChatUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,17 +69,14 @@ public class TeleportWarmupManager {
         // Get starting position for movement check
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
         if (transform == null) {
-            playerRef.sendMessage(Message.raw("Failed to start teleport warmup."));
+            playerRef.sendMessage(ChatUtil.parse(Messages.ERROR_WARMUP_FAILED));
             return;
         }
 
         Vector3d startPos = transform.getPosition().clone();
         String destName = displayName != null ? displayName : String.format("%.1f, %.1f, %.1f", destination.x(), destination.y(), destination.z());
 
-        playerRef.sendMessage(Message.raw(String.format(
-            "Teleporting to %s in %d seconds... Don't move!",
-            destName, warmupSeconds
-        )));
+        playerRef.sendMessage(ChatUtil.parse(Messages.INFO_WARMUP_STARTED, destName, warmupSeconds));
 
         // Schedule the teleport
         ScheduledFuture<?> future = scheduler.schedule(() -> {
@@ -104,7 +102,7 @@ public class TeleportWarmupManager {
                     double distance = startPos.distanceTo(currentPos);
 
                     if (distance > MOVEMENT_THRESHOLD) {
-                        playerRef.sendMessage(Message.raw("Teleport cancelled - you moved!"));
+                        playerRef.sendMessage(ChatUtil.parse(Messages.INFO_WARMUP_CANCELLED));
                         return;
                     }
                 }
@@ -180,14 +178,14 @@ public class TeleportWarmupManager {
                 cooldownManager.setCooldown(playerUuid, commandType);
 
                 String destName = displayName != null ? displayName : String.format("%.1f, %.1f, %.1f", destination.x(), destination.y(), destination.z());
-                playerRef.sendMessage(Message.raw(String.format("Teleported to %s!", destName)));
+                playerRef.sendMessage(ChatUtil.parse(Messages.SUCCESS_TELEPORTED, destName));
 
                 if (onComplete != null) {
                     onComplete.run();
                 }
             });
         }).exceptionally(ex -> {
-            playerRef.sendMessage(Message.raw("Failed to load destination chunk. Teleport cancelled."));
+            playerRef.sendMessage(ChatUtil.parse(Messages.ERROR_CHUNK_LOAD_FAILED));
             return null;
         });
     }
@@ -198,7 +196,7 @@ public class TeleportWarmupManager {
             pending.future().cancel(false);
             pending.movementCheckFuture().cancel(false);
             if (sendMessage) {
-                pending.playerRef().sendMessage(Message.raw("Teleport cancelled - you moved!"));
+                pending.playerRef().sendMessage(ChatUtil.parse(Messages.INFO_WARMUP_CANCELLED));
             }
         }
     }

@@ -2,13 +2,13 @@ package com.leclowndu93150.hyssentials.commands.msg;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.PrivateMessageManager;
 import com.leclowndu93150.hyssentials.util.ChatUtil;
 import java.util.UUID;
@@ -36,20 +36,20 @@ public class ReplyCommand extends AbstractPlayerCommand {
         String inputString = context.getInputString().trim();
         String[] parts = inputString.split("\\s+", 2);
         if (parts.length < 2 || parts[1].isBlank()) {
-            context.sendMessage(Message.raw("Usage: /r <message>"));
+            context.sendMessage(ChatUtil.parse(Messages.USAGE_REPLY));
             return;
         }
         String message = parts[1];
 
         UUID lastUuid = msgManager.getLastMessaged(playerRef.getUuid());
         if (lastUuid == null) {
-            context.sendMessage(Message.raw("You have no one to reply to."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_NO_REPLY_TARGET));
             return;
         }
 
         PlayerRef targetPlayer = Universe.get().getPlayer(lastUuid);
         if (targetPlayer == null) {
-            context.sendMessage(Message.raw("That player is no longer online."));
+            context.sendMessage(ChatUtil.parse(Messages.ERROR_REPLY_TARGET_OFFLINE));
             return;
         }
 

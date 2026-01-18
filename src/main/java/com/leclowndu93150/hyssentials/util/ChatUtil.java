@@ -5,8 +5,11 @@ import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.plugin.PluginManager;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.leclowndu93150.chatcustomization.util.ColorUtil;
+import com.leclowndu93150.hyssentials.lang.Messages;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +19,36 @@ import javax.annotation.Nullable;
 /**
  * Utility for sending formatted messages that integrates with ChatCustomization if available.
  * Falls back to vanilla Message formatting if ChatCustomization is not installed.
+ *
+ * Supports MiniMessage-style tags:
+ * - <red>text</red> - red (#FF5555)
+ * - <green>text</green> - green (#55FF55)
+ * - <yellow>text</yellow> - yellow (#FFFF55)
+ * - <gray>text</gray> - gray (#AAAAAA)
+ * - <orange>text</orange> - orange (#FFAA00)
+ * - <#RRGGBB>text</#RRGGBB> - custom hex color
+ * - <bold>text</bold> or <b>text</b>
+ * - <italic>text</italic> or <i>text</i>
+ * - <underline>text</underline> or <u>text</u>
  */
 public final class ChatUtil {
     private static final PluginIdentifier CHAT_CUSTOMIZATION_ID = new PluginIdentifier("com.leclowndu93150", "ChatCustomization");
     private static final Pattern FORMAT_CODE_PATTERN = Pattern.compile("&(#[0-9A-Fa-f]{6}|[bilmru])");
+
+    // MiniMessage-style tag pattern: matches <tag>, </tag>, <#RRGGBB>, </#RRGGBB>
+    private static final Pattern TAG_PATTERN = Pattern.compile("<(/?)(red|green|yellow|gray|orange|white|aqua|blue|purple|pink|bold|b|italic|i|underline|u|#[0-9A-Fa-f]{6})>");
+
+    // ============ COLOR CONSTANTS ============
+    public static final String COLOR_RED = "#FF5555";
+    public static final String COLOR_GREEN = "#55FF55";
+    public static final String COLOR_YELLOW = "#FFFF55";
+    public static final String COLOR_GRAY = "#AAAAAA";
+    public static final String COLOR_ORANGE = "#FFAA00";
+    public static final String COLOR_WHITE = "#FFFFFF";
+    public static final String COLOR_AQUA = "#55FFFF";
+    public static final String COLOR_BLUE = "#5555FF";
+    public static final String COLOR_PURPLE = "#AA00AA";
+    public static final String COLOR_PINK = "#FF55FF";
 
     private ChatUtil() {}
 
@@ -74,6 +103,130 @@ public final class ChatUtil {
         return Message.raw(text).color(toHex(color));
     }
 
+    // ============ MINIMESSAGE-STYLE PARSER ============
+
+    /**
+     * Parses a string with MiniMessage-style tags and returns a formatted Message.
+     * Supports:
+     * - <red>text</red> - red (#FF5555)
+     * - <green>text</green> - green (#55FF55)
+     * - <yellow>text</yellow> - yellow (#FFFF55)
+     * - <gray>text</gray> - gray (#AAAAAA)
+     * - <orange>text</orange> - orange (#FFAA00)
+     * - <#RRGGBB>text</#RRGGBB> - custom hex color
+     * - <bold>text</bold> or <b>text</b>
+     * - <italic>text</italic> or <i>text</i>
+     * - <underline>text</underline> or <u>text</u>
+     */
+    @Nonnull
+    public static Message parse(@Nonnull String text) {
+        if (!text.contains("<")) {
+            return Message.raw(text);
+        }
+
+        List<Message> parts = new ArrayList<>();
+        Matcher matcher = TAG_PATTERN.matcher(text);
+
+        Deque<String> colorStack = new ArrayDeque<>();
+        boolean bold = false;
+        boolean italic = false;
+        boolean underline = false;
+
+        int lastEnd = 0;
+
+        while (matcher.find()) {
+            // Add text before this tag
+            if (matcher.start() > lastEnd) {
+                String segment = text.substring(lastEnd, matcher.start());
+                String currentColor = colorStack.isEmpty() ? null : colorStack.peek();
+                parts.add(applyMiniFormat(segment, bold, italic, underline, currentColor));
+            }
+
+            boolean isClosing = matcher.group(1).equals("/");
+            String tag = matcher.group(2).toLowerCase();
+
+            if (isClosing) {
+                // Handle closing tags
+                switch (tag) {
+                    case "red", "green", "yellow", "gray", "orange", "white", "aqua", "blue", "purple", "pink" -> {
+                        if (!colorStack.isEmpty()) colorStack.pop();
+                    }
+                    case "bold", "b" -> bold = false;
+                    case "italic", "i" -> italic = false;
+                    case "underline", "u" -> underline = false;
+                    default -> {
+                        // Hex color closing tag
+                        if (tag.startsWith("#") && !colorStack.isEmpty()) {
+                            colorStack.pop();
+                        }
+                    }
+                }
+            } else {
+                // Handle opening tags
+                switch (tag) {
+                    case "red" -> colorStack.push(COLOR_RED);
+                    case "green" -> colorStack.push(COLOR_GREEN);
+                    case "yellow" -> colorStack.push(COLOR_YELLOW);
+                    case "gray" -> colorStack.push(COLOR_GRAY);
+                    case "orange" -> colorStack.push(COLOR_ORANGE);
+                    case "white" -> colorStack.push(COLOR_WHITE);
+                    case "aqua" -> colorStack.push(COLOR_AQUA);
+                    case "blue" -> colorStack.push(COLOR_BLUE);
+                    case "purple" -> colorStack.push(COLOR_PURPLE);
+                    case "pink" -> colorStack.push(COLOR_PINK);
+                    case "bold", "b" -> bold = true;
+                    case "italic", "i" -> italic = true;
+                    case "underline", "u" -> underline = true;
+                    default -> {
+                        // Hex color tag
+                        if (tag.startsWith("#")) {
+                            colorStack.push(tag.toUpperCase());
+                        }
+                    }
+                }
+            }
+            lastEnd = matcher.end();
+        }
+
+        // Add remaining text after last tag
+        if (lastEnd < text.length()) {
+            String segment = text.substring(lastEnd);
+            String currentColor = colorStack.isEmpty() ? null : colorStack.peek();
+            parts.add(applyMiniFormat(segment, bold, italic, underline, currentColor));
+        }
+
+        if (parts.isEmpty()) {
+            return Message.empty();
+        }
+        if (parts.size() == 1) {
+            return parts.get(0);
+        }
+
+        Message result = Message.empty();
+        for (Message part : parts) {
+            result.insert(part);
+        }
+        return result;
+    }
+
+    /**
+     * Parses a translated message with MiniMessage-style tags.
+     */
+    @Nonnull
+    public static Message parse(@Nonnull Messages message, Object... args) {
+        return parse(message.get(args));
+    }
+
+    private static Message applyMiniFormat(String text, boolean bold, boolean italic,
+                                           boolean underline, @Nullable String color) {
+        Message msg = Message.raw(text);
+        if (bold) msg.bold(true);
+        if (italic) msg.italic(true);
+        // Note: underline is tracked but Message API doesn't support it yet
+        if (color != null) msg.color(color);
+        return msg;
+    }
+
     /**
      * Creates a message with a colored prefix.
      */
@@ -111,8 +264,8 @@ public final class ChatUtil {
     @Nonnull
     public static Message privateMessageTo(@Nonnull String recipientName, @Nonnull String message) {
         return Message.empty()
-            .insert(Message.raw("[To " + recipientName + "] ").color("#AAAAAA"))
-            .insert(Message.raw(message).color("#FFFFFF"));
+            .insert(parse(Messages.PM_TO.get(recipientName)))
+            .insert(Message.raw(message).color(COLOR_WHITE));
     }
 
     /**
@@ -121,8 +274,8 @@ public final class ChatUtil {
     @Nonnull
     public static Message privateMessageFrom(@Nonnull String senderName, @Nonnull String message) {
         return Message.empty()
-            .insert(Message.raw("[From " + senderName + "] ").color("#AAAAAA"))
-            .insert(Message.raw(message).color("#FFFFFF"));
+            .insert(parse(Messages.PM_FROM.get(senderName)))
+            .insert(Message.raw(message).color(COLOR_WHITE));
     }
 
     /**

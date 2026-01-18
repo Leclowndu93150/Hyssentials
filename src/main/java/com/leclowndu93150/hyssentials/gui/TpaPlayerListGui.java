@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.TpaRequest;
 import com.leclowndu93150.hyssentials.data.TpaSettings;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TpaManager;
 import javax.annotation.Nonnull;
@@ -48,7 +49,7 @@ public class TpaPlayerListGui extends InteractiveCustomUIPage<TpaPlayerListGui.T
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/Hyssentials_TpaList.ui");
 
-        String title = tpaType == TpaRequest.TpaType.TPA ? "Teleport to Player" : "Request Player Here";
+        String title = tpaType == TpaRequest.TpaType.TPA ? Messages.UI_TPA_LIST_TITLE_TPA.get() : Messages.UI_TPA_LIST_TITLE_TPAHERE.get();
         cmd.set("#TitleLabel.Text", title);
 
         events.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton",
@@ -82,7 +83,7 @@ public class TpaPlayerListGui extends InteractiveCustomUIPage<TpaPlayerListGui.T
         }
 
         if (onlinePlayers.isEmpty()) {
-            cmd.appendInline("#PlayerList", "Label { Text: \"No other players online\"; Style: (FontSize: 14, TextColor: #ffffff(0.5), HorizontalAlignment: Center); Padding: (Top: 20); }");
+            cmd.appendInline("#PlayerList", "Label { Text: \"" + Messages.UI_TPA_NO_PLAYERS.get() + "\"; Style: (FontSize: 14, TextColor: #ffffff(0.5), HorizontalAlignment: Center); Padding: (Top: 20); }");
         }
     }
 
@@ -112,14 +113,14 @@ public class TpaPlayerListGui extends InteractiveCustomUIPage<TpaPlayerListGui.T
         TpaSettings settings = rankManager.getEffectiveTpaSettings(senderPlayer);
 
         if (!settings.isEnabled()) {
-            String cmd = tpaType == TpaRequest.TpaType.TPA ? "/tpa" : "/tpahere";
-            senderPlayer.sendMessage(Message.raw("You don't have permission to use " + cmd + "."));
+            String cmdName = tpaType == TpaRequest.TpaType.TPA ? "/tpa" : "/tpahere";
+            senderPlayer.sendMessage(Message.raw(Messages.UI_ERROR_NO_TPA_PERMISSION.get(cmdName)));
             return;
         }
 
         if (tpaManager.isOnCooldown(senderUuid, settings.getCooldownSeconds())) {
             long remaining = tpaManager.getCooldownRemaining(senderUuid, settings.getCooldownSeconds());
-            senderPlayer.sendMessage(Message.raw(String.format("You must wait %d seconds before sending another request.", remaining)));
+            senderPlayer.sendMessage(Message.raw(Messages.UI_ERROR_TPA_COOLDOWN.get(remaining)));
             return;
         }
 
@@ -127,19 +128,19 @@ public class TpaPlayerListGui extends InteractiveCustomUIPage<TpaPlayerListGui.T
         try {
             targetUuid = UUID.fromString(targetUuidStr);
         } catch (IllegalArgumentException e) {
-            senderPlayer.sendMessage(Message.raw("Invalid player."));
+            senderPlayer.sendMessage(Message.raw(Messages.UI_ERROR_INVALID_PLAYER.get()));
             return;
         }
 
         PlayerRef targetPlayer = Universe.get().getPlayer(targetUuid);
         if (targetPlayer == null) {
-            senderPlayer.sendMessage(Message.raw("Player is no longer online."));
+            senderPlayer.sendMessage(Message.raw(Messages.UI_ERROR_PLAYER_OFFLINE.get()));
             return;
         }
 
         boolean sent = tpaManager.sendRequest(senderUuid, targetUuid, tpaType, settings.getTimeoutSeconds());
         if (!sent) {
-            senderPlayer.sendMessage(Message.raw("You already have a pending request to this player."));
+            senderPlayer.sendMessage(Message.raw(Messages.UI_ERROR_ALREADY_PENDING.get()));
             return;
         }
 
@@ -147,12 +148,12 @@ public class TpaPlayerListGui extends InteractiveCustomUIPage<TpaPlayerListGui.T
 
         this.close();
 
-        senderPlayer.sendMessage(Message.raw(String.format("Teleport request sent to %s.", targetPlayer.getUsername())));
+        senderPlayer.sendMessage(Message.raw(Messages.UI_SUCCESS_TPA_SENT.get(targetPlayer.getUsername())));
 
         String requestMsg = tpaType == TpaRequest.TpaType.TPA
-            ? "%s has requested to teleport to you. Type /tpaccept to accept or /tpdeny to deny. Expires in %d seconds."
-            : "%s has requested you to teleport to them. Type /tpaccept to accept or /tpdeny to deny. Expires in %d seconds.";
-        targetPlayer.sendMessage(Message.raw(String.format(requestMsg, senderPlayer.getUsername(), settings.getTimeoutSeconds())));
+            ? Messages.UI_TPA_REQUEST_RECEIVED.get(senderPlayer.getUsername(), settings.getTimeoutSeconds())
+            : Messages.UI_TPAHERE_REQUEST_RECEIVED.get(senderPlayer.getUsername(), settings.getTimeoutSeconds());
+        targetPlayer.sendMessage(Message.raw(requestMsg));
     }
 
     public static class TpaListData {

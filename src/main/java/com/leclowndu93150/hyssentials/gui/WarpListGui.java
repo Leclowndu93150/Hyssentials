@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.leclowndu93150.hyssentials.data.CommandSettings;
 import com.leclowndu93150.hyssentials.data.LocationData;
+import com.leclowndu93150.hyssentials.lang.Messages;
 import com.leclowndu93150.hyssentials.manager.CooldownManager;
 import com.leclowndu93150.hyssentials.manager.RankManager;
 import com.leclowndu93150.hyssentials.manager.TeleportWarmupManager;
@@ -49,6 +50,8 @@ public class WarpListGui extends InteractiveCustomUIPage<WarpListGui.WarpListDat
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder cmd,
                       @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/Hyssentials_WarpList.ui");
+
+        cmd.set("#TitleLabel.Text", Messages.UI_WARP_LIST_TITLE.get());
 
         events.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton",
             EventData.of("Action", "Close"), false);
@@ -109,19 +112,19 @@ public class WarpListGui extends InteractiveCustomUIPage<WarpListGui.WarpListDat
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
 
         if (!settings.isEnabled()) {
-            playerRef.sendMessage(Message.raw("You don't have permission to use warps."));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_NO_WARP_PERMISSION.get()));
             return;
         }
 
         if (!bypassCooldown && cooldownManager.isOnCooldown(playerUuid, CooldownManager.WARP, settings.getCooldownSeconds())) {
             long remaining = cooldownManager.getCooldownRemaining(playerUuid, CooldownManager.WARP, settings.getCooldownSeconds());
-            playerRef.sendMessage(Message.raw(String.format("You must wait %d seconds before using /warp again.", remaining)));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_WARP_COOLDOWN.get(remaining)));
             return;
         }
 
         LocationData warp = warpManager.getWarp(warpName);
         if (warp == null) {
-            playerRef.sendMessage(Message.raw(String.format("Warp '%s' not found.", warpName)));
+            playerRef.sendMessage(Message.raw(Messages.UI_ERROR_WARP_NOT_FOUND.get(warpName)));
             return;
         }
 
