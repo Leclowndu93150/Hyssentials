@@ -177,9 +177,6 @@
       "invalid_player": "Joueur invalide.",
       "player_offline": "Le joueur n'est plus en ligne.",
       "already_pending": "Vous avez déjà une demande en attente vers ce joueur."
-    },
-    "success": {
-      "tpa_sent": "Demande de téléportation envoyée à %s."
     }
   }
 }

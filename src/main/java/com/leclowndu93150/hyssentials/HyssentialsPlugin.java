@@ -78,9 +78,8 @@ public class HyssentialsPlugin extends JavaPlugin {
         HyssentialsConfig cfg = this.config.get();
         this.config.save();
 
-        // Initialize language system
+        // Initialize language system (auto-syncs translation files)
         LanguageManager.init(this.getDataDirectory(), this.getLogger());
-        LanguageManager.exportDefaultLanguages();
         LanguageManager.setLanguage(cfg.getLanguage());
 
         this.dataManager = new DataManager(this.getDataDirectory(), this.getLogger());
